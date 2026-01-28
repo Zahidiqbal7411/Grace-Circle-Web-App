@@ -100,7 +100,7 @@
         <h2>Email Verified Successfully!</h2>
         
         <p class="message">
-            Your email has been verified. You can now login to your account.
+            Your email has been verified. You can now access to your account.
         </p>
         
         <div class="countdown_section">

@@ -36,6 +36,15 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
+     * Send the email verification notification.
+     * Overriding to use our custom VerifyEmail mailable.
+     */
+    public function sendEmailVerificationNotification()
+    {
+        \Illuminate\Support\Facades\Mail::to($this->email)->send(new \App\Mail\VerifyEmail($this));
+    }
+
+    /**
      * Generate the signed URL for email verification.
      * This fixes the "Call to a member function verificationUrl() on string" error.
      */
@@ -94,4 +103,16 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->last_seen && $this->last_seen->gt(Carbon::now()->subMinutes(5));
     }
+
+
+    /**
+     * Get the questions answered by this user.
+     */
+    public function questions()
+    {
+        return $this->belongsToMany(Question::class, 'user_question_answers')
+                    ->withPivot('answer_text')
+                    ->withTimestamps();
+    }
+
 }

@@ -116,6 +116,7 @@
                         @enderror
                     </div>
 
+
                     <div class="reg_chose form-group">
                         {{-- <div class="reg_check_box">
                             <input type="radio" id="s-option" name="selector">
@@ -124,6 +125,49 @@
                                 <div class="inside"></div>
                             </div>
                         </div> --}}
+
+                        <!-- Dynamic Questions Section -->
+                        @if(isset($questions) && $questions->count() > 0)
+                            <div class="questions-section" style="margin-bottom: 15px; max-height: 200px; overflow-y: auto; padding: 10px; background-color: #f9f9f9; border-radius: 5px;">
+                                <h5 style="margin-bottom: 10px; color: #333; font-weight: 600;">Profile Questions</h5>
+                                @foreach($questions as $question)
+                                    <div class="form-group" style="margin-bottom: 12px;">
+                                        <label style="font-size: 13px; color: #555; margin-bottom: 5px; display: block;">
+                                            {{ $question->question_text }}
+                                            @if($question->is_required)
+                                                <span style="color: red;">*</span>
+                                            @endif
+                                        </label>
+                                        
+                                        @if($question->question_type === 'select' && $question->options)
+                                            <select name="questions[{{ $question->id }}]" class="form-control" style="font-size: 13px; padding: 6px;" {{ $question->is_required ? 'required' : '' }}>
+                                                <option value="">Select an option</option>
+                                                @foreach($question->options as $option)
+                                                    <option value="{{ $option }}">{{ $option }}</option>
+                                                @endforeach
+                                            </select>
+                                        @elseif($question->question_type === 'textarea')
+                                            <textarea name="questions[{{ $question->id }}]" class="form-control" rows="2" style="font-size: 13px; padding: 6px;" placeholder="Enter your answer..." {{ $question->is_required ? 'required' : '' }}></textarea>
+                                        @elseif($question->question_type === 'radio' && $question->options)
+                                            <div style="padding: 5px 0;">
+                                                @foreach($question->options as $option)
+                                                    <label style="margin-right: 15px; font-weight: normal; font-size: 13px;">
+                                                        <input type="radio" name="questions[{{ $question->id }}]" value="{{ $option }}" {{ $question->is_required ? 'required' : '' }}> {{ $option }}
+                                                    </label>
+                                                @endforeach
+                                            </div>
+                                        @else
+                                            <input type="text" name="questions[{{ $question->id }}]" class="form-control" style="font-size: 13px; padding: 6px;" placeholder="Enter your answer..." {{ $question->is_required ? 'required' : '' }}>
+                                        @endif
+                                        
+                                        @error("questions.{$question->id}")
+                                            <small class="text-danger">{{ $message }}</small>
+                                        @enderror
+                                    </div>
+                                @endforeach
+                            </div>
+                        @endif
+
                         <button type="submit" value="LogIn" class="btn form-control login_btn">Register</button>
                     </div>
 
