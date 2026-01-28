@@ -1,0 +1,560 @@
+@extends('layouts.app')
+
+
+
+
+@section('content')
+<!--================Slider Reg Area =================-->
+<section class="slider_area">
+    <div class="slider_inner">
+        <div class="rev_slider" data-version="5.3.0.2" id="home-slider">
+            <ul>
+                <!-- Slide 1: Coffee Couple at Church -->
+                <li data-slotamount="7" data-easein="Power4.easeInOut" data-easeout="Power4.easeInOut"
+                    data-masterspeed="1200" data-rotate="0" data-saveperformance="off">
+                    <img src="{{ asset('img/slider-img/slider-2.png') }}" alt="Grace Circle Christian Couple"
+                        style="image-rendering: -webkit-optimize-contrast; image-rendering: high-quality;"
+                        data-bgposition="center center" 
+                        data-bgfit="cover"
+                        data-bgrepeat="no-repeat" 
+                        data-bgparallax="5" 
+                        class="rev-slidebg" 
+                        data-no-retina>
+                </li>
+                <!-- Slide 2: Community Table Gathering -->
+                <li data-slotamount="7" data-easein="Power4.easeInOut" data-easeout="Power4.easeInOut"
+                    data-masterspeed="1200" data-rotate="0" data-saveperformance="off">
+                    <img src="{{ asset('img/banner/banner-bg-1.jpg') }}" alt="Christian Community Gathering"
+                        style="image-rendering: -webkit-optimize-contrast; image-rendering: high-quality;"
+                        data-bgposition="center center" 
+                        data-bgfit="cover"
+                        data-bgrepeat="no-repeat" 
+                        data-bgparallax="5" 
+                        class="rev-slidebg" 
+                        data-no-retina>
+                </li>
+                <!-- Slide 3: Outdoor Fellowship Dinner -->
+                <li data-slotamount="7" data-easein="Power4.easeInOut" data-easeout="Power4.easeInOut"
+                    data-masterspeed="1200" data-rotate="0" data-saveperformance="off">
+                    <img src="{{ asset('img/banner/banner-bg-2.jpg') }}" alt="Christian Fellowship Dinner"
+                        style="image-rendering: -webkit-optimize-contrast; image-rendering: high-quality;"
+                        data-bgposition="center center" 
+                        data-bgfit="cover"
+                        data-bgrepeat="no-repeat" 
+                        data-bgparallax="5" 
+                        class="rev-slidebg" 
+                        data-no-retina>
+                </li>
+            </ul>
+        </div><!-- END REVOLUTION SLIDER -->
+    </div>
+    <div class="registration_form_area">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-6">
+                    <!-- <div class="registration_form_s">
+                            <h4>Registration</h4>
+                            <form>
+                                <div class="form-group">
+                                    <input type="email" class="form-control" id="reg_email2" placeholder="Email">
+                                </div>
+                                <div class="form-group">
+                                    <input type="text" class="form-control" id="reg_first2" placeholder="Full Name">
+                                </div>
+                                <div class="form-group">
+                                    <input type="text" class="form-control" id="reg_user2" placeholder="Username">
+                                </div>
+                                <div class="form-group">
+                                    <input type="password" class="form-control" id="reg_pass2" placeholder="Password">
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <div class="btn-group">
+                                                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                                                <span data-bind="label">Gender</span>&nbsp;<span class="arrow_carrot-down"><i class="fa fa-sort-asc" aria-hidden="true"></i><i class="fa fa-sort-desc" aria-hidden="true"></i></span>
+                                                </button>
+                                                <ul class="dropdown-menu" role="menu">
+                                                    <li><a href="#">Male</a></li>
+                                                    <li><a href="#">Female</a></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <div class="datepicker">
+                                                <input type='text' class="form-control datetimepicker4" placeholder="Birthday" />
+                                                <span class="add-on"><i class="fa fa-calendar" aria-hidden="true"></i></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="reg_chose form-group">
+                                    <button type="submit" value="LogIn" class="btn form-control login_btn">Register</button>
+                                </div>
+                            </form>
+                        </div> -->
+                </div>
+                <div class="col-sm-6">
+                    <!-- Clean slider - no overlapping image -->
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!--================End Slider Reg Area =================-->
+
+<!--================Welcome Area =================-->
+<section class="welcome_area">
+    <div class="container">
+        <div class="welcome_title">
+            <h3>Welcome to <span>Grace Circle</span>Christian Dating</h3>
+            <img src="{{ asset('img/w-title-b.png') }}" alt="">
+        </div>
+        <div class="row">
+            <div class="col-sm-3 col-xs-6">
+                <div class="welcome_item">
+                    <img src="{{ asset('img/welcome-icon/w-icon-1.png') }}" alt="" style="border-radius: 50%; width: 100px; height: 100px; object-fit: cover; border: 3px solid #ffd700; box-shadow: 0 5px 15px rgba(0,0,0,0.1); margin-bottom: 15px;">
+                    <h4 class="counter">1611</h4>
+                    <h6>Total Members</h6>
+                </div>
+            </div>
+            <div class="col-sm-3 col-xs-6">
+                <div class="welcome_item">
+                    <img src="{{ asset('img/welcome-icon/w-icon-2.png') }}" alt="" style="border-radius: 50%; width: 100px; height: 100px; object-fit: cover; border: 3px solid #ffd700; box-shadow: 0 5px 15px rgba(0,0,0,0.1); margin-bottom: 15px;">
+                    <h4 class="counter">500</h4>
+                    <h6>Members online</h6>
+                </div>
+            </div>
+            <div class="col-sm-3 col-xs-6">
+                <div class="welcome_item">
+                    <img src="{{ asset('img/welcome-icon/w-icon-3.png') }}" alt="" style="border-radius: 50%; width: 100px; height: 100px; object-fit: cover; border: 3px solid #ffd700; box-shadow: 0 5px 15px rgba(0,0,0,0.1); margin-bottom: 15px;">
+                    <h4 class="counter">300</h4>
+                    <h6>Men online</h6>
+                </div>
+            </div>
+            <div class="col-sm-3 col-xs-6">
+                <div class="welcome_item">
+                    <img src="{{ asset('img/welcome-icon/w-icon-4.png') }}" alt="" style="border-radius: 50%; width: 100px; height: 100px; object-fit: cover; border: 3px solid #ffd700; box-shadow: 0 5px 15px rgba(0,0,0,0.1); margin-bottom: 15px;">
+                    <h4 class="counter">200</h4>
+                    <h6>Women online</h6>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!--================End Welcome Area =================-->
+
+
+
+<!--================Download Area =================-->
+<section class="download_area">
+    <div class="download_full_slider">
+        <div class="container">
+            <div class="row">
+                <div class="item">
+                    <div class="col-md-7">
+                        <div class="download_app_icon">
+                            <h4>Download <span>Grace Circle</span>Christian Dating app</h4>
+                            <h5>Free Available in All Store PlayStore, AppStore & Microsoft Store</h5>
+                            <ul>
+                                <li><a href="#"><i class="fa fa-android"></i></a></li>
+                                <li><a href="#"><i class="fa fa-apple"></i></a></li>
+                                <li><a href="#"><i class="fa fa-windows"></i></a></li>
+                            </ul>
+                        </div>
+                        <div class="download_content">
+                            <div class="item">
+                                <p>It is a long established fact that a reader will be distracted by the readable
+                                    content of a page when looking at its layout.The point of using Lorem Ipsum is
+                                    that it has a more-or-less normal distribution.</p>
+                                <h4>Amanda Davidson</h4>
+                                <ul>
+                                    <li><a href="#"><i class="fa fa-star"></i></a></li>
+                                    <li><a href="#"><i class="fa fa-star"></i></a></li>
+                                    <li><a href="#"><i class="fa fa-star"></i></a></li>
+                                    <li><a href="#"><i class="fa fa-star"></i></a></li>
+                                    <li><a href="#"><i class="fa fa-star"></i></a></li>
+                                </ul>
+                            </div>
+                            <div class="item">
+                                <p>It is a long established fact that a reader will be distracted by the readable
+                                    content of a page when looking at its layout.The point of using Lorem Ipsum is
+                                    that it has a more-or-less normal distribution.</p>
+                                <h4>Amanda Davidson</h4>
+                                <ul>
+                                    <li><a href="#"><i class="fa fa-star"></i></a></li>
+                                    <li><a href="#"><i class="fa fa-star"></i></a></li>
+                                    <li><a href="#"><i class="fa fa-star"></i></a></li>
+                                    <li><a href="#"><i class="fa fa-star"></i></a></li>
+                                    <li><a href="#"><i class="fa fa-star"></i></a></li>
+                                </ul>
+                            </div>
+                            <div class="item">
+                                <p>It is a long established fact that a reader will be distracted by the readable
+                                    content of a page when looking at its layout.The point of using Lorem Ipsum is
+                                    that it has a more-or-less normal distribution.</p>
+                                <h4>Amanda Davidson</h4>
+                                <ul>
+                                    <li><a href="#"><i class="fa fa-star"></i></a></li>
+                                    <li><a href="#"><i class="fa fa-star"></i></a></li>
+                                    <li><a href="#"><i class="fa fa-star"></i></a></li>
+                                    <li><a href="#"><i class="fa fa-star"></i></a></li>
+                                    <li><a href="#"><i class="fa fa-star"></i></a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        <div class="download_moblie">
+                            <div class="download_m_slider">
+                                <img src="{{ asset('img/mobile-slider/mobile-1.png') }}" alt="">
+                                <div class="download_moblile_slider">
+                                    <div class="item">
+                                        <img src="{{ asset('img/mobile-slider/test.jpg') }}" alt="">
+                                    </div>
+                                    <div class="item">
+                                        <img src="{{ asset('img/mobile-slider/test.jpg') }}" alt="">
+                                    </div>
+                                    <div class="item">
+                                        <img src="{{ asset('img/mobile-slider/test.jpg') }}" alt="">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!--================End Download Area =================-->
+
+
+
+<!--================Find Your Soul Area =================-->
+<section class="find_soul_area">
+    <div class="container">
+        <div class="welcome_title">
+            <h3>Step to Find Your Soul mate</h3>
+            <img src="{{ asset('img/w-title-b.png') }}" alt="">
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="find_soul_item">
+                    <img src="{{ asset('img/blog/blog-grid/blog-grid-1.jpg') }}" alt="" style="border-radius: 50%; width: 120px; height: 120px; object-fit: cover; margin-bottom: 20px;">
+                    <h4>Create a profile</h4>
+                    <p>Register as a member of Grace Circle and start your journey today.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="find_soul_item">
+                    <img src="{{ asset('img/blog/blog-grid/blog-grid-2.jpg') }}" alt="" style="border-radius: 50%; width: 120px; height: 120px; object-fit: cover; margin-bottom: 20px;">
+                    <h4>Find matches </h4>
+                    <p>Connect with high-value Christian partners who share your faith.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="find_soul_item">
+                    <img src="{{ asset('img/slider-img/slider-1.png') }}" alt="" style="border-radius: 50%; width: 120px; height: 120px; object-fit: cover; margin-bottom: 20px;">
+                    <h4>Start Dating</h4>
+                    <p>Take the next step and build a beautiful relationship centered on grace.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!--================End Find Your Soul Area =================-->
+
+<!--================Video Area =================-->
+<section class="video_area">
+    <div class="row m0 video_row">
+        <iframe id="video"
+            src="http://www.youtube.com/embed/bCIXMvE5nL4?enablejsapi=1&html5=1&rel=0&fs=0&loop=1&showinfo=0&disablekb=1&controls=0&color=white&playlist=bCIXMvE5nL4"></iframe>
+        <div class="overlay" id="video_overlay">
+            <div class="overlay_bg"></div>
+            <div class="play_pause row m0">
+                <i class="fa fa-play" aria-hidden="true" id="play_btn"></i>
+                <i class="fa fa-pause" aria-hidden="true" id="pause_btn"></i>
+                <div class="video_content">
+                    <h4>Find your perfect match With us </h4>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!--================End Video Area =================-->
+
+<!--================Testimonials Area =================-->
+<section class="testimonials_area">
+    <div class="container">
+        <div class="welcome_title">
+            <h3>Testimonials</h3>
+            <img src="{{ asset('img/w-title-b.png') }}" alt="">
+        </div>
+        <div class="testimonials_slider">
+            <div class="item">
+                <div class="col-md-9">
+                    <div class="row">
+                        <div class="test_left_content">
+                            <p>On the other hand, we denounce with righteous indignation and dislike men who are so
+                                beguiled and demoralized by the charms of pleasure of the moment, <span>so blinded
+                                    by desire, that they cannot foresee the pain and trouble that are bound to ensue
+                                    and equal blame belongs to those who fail in their duty through weakness of
+                                    will, which is the same as saying through shrinking from toil and pain.</span>
+                                These cases are perfectly simple and easy to distinguish. In a free hour, when our
+                                power of choice is untrammelled and when nothing prevents.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="row">
+                        <div class="test_man">
+                            <img class="img-circle img-fluid"
+                                src="{{ asset('img/testimonials/testimonial.jpg') }}" alt=""
+                                width="120" height="120">
+                            <h4>Atif Khan</h4>
+                            <h5>Software developer </h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="item">
+                <div class="col-md-9">
+                    <div class="row">
+                        <div class="test_left_content">
+                            <p>On the other hand, we denounce with righteous indignation and dislike men who are so
+                                beguiled and demoralized by the charms of pleasure of the moment, <span>so blinded
+                                    by desire, that they cannot foresee the pain and trouble that are bound to ensue
+                                    and equal blame belongs to those who fail in their duty through weakness of
+                                    will, which is the same as saying through shrinking from toil and pain.</span>
+                                These cases are perfectly simple and easy to distinguish. In a free hour, when our
+                                power of choice is untrammelled and when nothing prevents.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="row">
+                        <div class="test_man">
+                            <img class="img-circle" src="{{ asset('img/testimonials/testimonial.jpg') }}"
+                                alt="" width="120" height="120">
+                            <h4>Muneeb Khan</h4>
+                            <h5>Graphic Designer </h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!--================End Testimonials Area =================-->
+
+<!--================Blog slider Area =================-->
+<section class="blog_slider_area">
+    <div class="blog_slider_inner">
+        <div class="item">
+            <div class="single_blog_slider">
+                <img src="" alt="">
+                <div class="blog_item_content">
+                    <h4>Your Blog title here</h4>
+                    <h5>03 Sep, 2016 <span>|</span> Dating</h5>
+                    <ul>
+                        <li><a href="#"><i class="fa fa-search"></i></a></li>
+                        <li><a href="#"><i class="fa fa-link"></i></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="single_blog_slider">
+                <img src="{{ asset('img/blog/blog_slider/blog-img1.jpg') }}" alt="">
+                <div class="blog_item_content">
+                    <h4>Your Blog title here</h4>
+                    <h5>03 Sep, 2016 <span>|</span> Dating</h5>
+                    <ul>
+                        <li><a href="#"><i class="fa fa-search"></i></a></li>
+                        <li><a href="#"><i class="fa fa-link"></i></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="single_blog_slider">
+                <img src="{{ asset('img/blog/blog_slider/blog-img2.jpg') }}" alt="">
+                <div class="blog_item_content">
+                    <h4>Your Blog title here</h4>
+                    <h5>03 Sep, 2016 <span>|</span>Dating</h5>
+                    <ul>
+                        <li><a href="#"><i class="fa fa-search"></i></a></li>
+                        <li><a href="#"><i class="fa fa-link"></i></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="single_blog_slider">
+                <img src="{{ asset('img/blog/blog_slider/blog-img2.jpg') }}" alt="">
+                <div class="blog_item_content">
+                    <h4>Your Blog title here</h4>
+                    <h5>03 Sep, 2016 <span>|</span> Dating</h5>
+                    <ul>
+                        <li><a href="#"><i class="fa fa-search"></i></a></li>
+                        <li><a href="#"><i class="fa fa-link"></i></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="single_blog_slider">
+                <img src="{{ asset('img/blog/blog_slider/blog-img2.jpg') }}" alt="">
+                <div class="blog_item_content">
+                    <h4>Your Blog title here</h4>
+                    <h5>03 Sep, 2016 <span>|</span> Dating</h5>
+                    <ul>
+                        <li><a href="#"><i class="fa fa-search"></i></a></li>
+                        <li><a href="#"><i class="fa fa-link"></i></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="single_blog_slider">
+                <img src="{{ asset('img/blog/blog_slider/blog-img2.jpg') }}" alt="">
+                <div class="blog_item_content">
+                    <h4>Your Blog title here</h4>
+                    <h5>03 Sep, 2016 <span>|</span> Dating</h5>
+                    <ul>
+                        <li><a href="#"><i class="fa fa-search"></i></a></li>
+                        <li><a href="#"><i class="fa fa-link"></i></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!--================End Blog slider Area =================-->
+
+
+
+
+<!--================Register Members slider Area =================-->
+<section class="register_members_slider">
+    <div class="container">
+        <div class="welcome_title">
+            <h3>Latest registered members</h3>
+            <img src="{{ asset('img/w-title-b.png') }}" alt=" img not found ">
+        </div>
+        <div class="r_members_inner">
+            <div class="item">
+                <img src="{{ asset('./img/members/member1 (1).jpg') }}" alt="img not found">
+                <h4>Rocky Ahmed</h4>
+                <h5>22 years old</h5>
+            </div>
+            <div class="item">
+                <img src="{{ asset('./img/members/member1 (2).jpg') }}" alt="img not found">
+                <h4>Alex Jones</h4>
+                <h5>23 years old</h5>
+            </div>
+            <div class="item">
+                <img src="{{ asset('./img/members/member1 (3).jpg') }}" alt="img not found">
+                <h4>Nancy Martin</h4>
+                <h5>25 years old</h5>
+            </div>
+            <div class="item">
+                <img src="{{ asset('./img/members/member1 (4).jpg') }}" alt="img not found">
+                <h4>Kavin Smith</h4>
+                <h5>20 years old</h5>
+            </div>
+            <div class="item">
+                <img src="{{ asset('./img/members/member1 (5).jpg') }}" alt="img not found">
+                <h4>Lena Adms</h4>
+                <h5>26 years old</h5>
+            </div>
+            <div class="item">
+                <img src="{{ asset('./img/members/member1 (6).jpg') }}" alt="img not found">
+                <h4>Peter Nevill</h4>
+                <h5>20 years old</h5>
+            </div>
+            <div class="item">
+                <img src="{{ asset('./img/members/member1 (7).jpg') }}" alt="img not found">
+                <h4>Alex Jones</h4>
+                <h5>23 years old</h5>
+            </div>
+            <div class="item">
+                <img src="{{ asset('./img/members/member1 (2).jpg') }}" alt="img not found">
+                <h4>Nancy Martin</h4>
+                <h5>25 years old</h5>
+            </div>
+        </div>
+    </div>
+</section>
+<!--================End Register Members  slider Area =================-->
+
+
+
+<!--================Map Area =================-->
+<section class="map_area">
+
+    <div id="mapCanvas"></div>
+
+    <div class="container">
+        <div class="bloger_map_form">
+            <h4>Find People in Map</h4>
+            <div class="bloger_map_inner">
+                <div class="form-single row m0">
+                    <h5>Looking for a</h5>
+                    <select class="selectpicker">
+                        <option>Woman</option>
+                        <option>Man</option>
+                    </select>
+                </div>
+                <div class="form-single row m0">
+                    <h5>Your location</h5>
+                    <select class="selectpicker">
+                        <option>Paris</option>
+                        <option>Paris</option>
+                    </select>
+                </div>
+                <div class="form-single row m0">
+                    <h5>From (age)</h5>
+                    <select class="selectpicker">
+                        <option>20</option>
+                        <option>30</option>
+                        <option>40</option>
+                    </select>
+                </div>
+                <div class="form-single row m0">
+                    <h5>To (age)</h5>
+                    <select class="selectpicker">
+                        <option>32</option>
+                        <option>42</option>
+                        <option>52</option>
+                    </select>
+                </div>
+                <div class="range_count">
+                    <h5>Search Distance</h5>
+                    <div id="slider-range-min">
+                        <div class="ui-slider-handle">
+                            <span class="custom-handle"></span>
+                        </div>
+                    </div>
+                    <div class="left_value">
+                        <div class="custom-value"></div>
+                        <div class="km_value">Km</div>
+                    </div>
+                    <div class="right_value">
+                        <h5>50km</h5>
+                    </div>
+                </div>
+                <div class="reg_chose">
+                    <button type="submit" value="LogIn" class="btn form-control login_btn">Search</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+@endsection
