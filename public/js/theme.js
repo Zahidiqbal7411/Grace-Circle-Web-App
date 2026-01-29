@@ -449,21 +449,19 @@
     /*----------------------------------------------------*/
     /*  Dwinload Mobile Slider
     /*----------------------------------------------------*/
-    $(window).on('load', function(){
-        function download_mobile(){
-            if ( $('.download_moblile_slider').length ){
-                $('.download_moblile_slider').owlCarousel({
-                    loop:true,
-                    margin:0,
-                    items: 1,
-                    nav:false,
-                    autoplay: true,
-                    smartSpeed: 1500,
-                })
-            }
+    function download_mobile(){
+        if ( $('.download_mobile_slider').length ){
+            $('.download_mobile_slider').owlCarousel({
+                loop:true,
+                margin:0,
+                items: 1,
+                nav:false,
+                autoplay: true,
+                smartSpeed: 1500,
+            })
         }
-        download_mobile();
-    });
+    }
+    download_mobile();
     
     
     /*----------------------------------------------------*/

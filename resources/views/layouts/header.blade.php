@@ -30,7 +30,7 @@
     <div class="row">
         <div class="col-md-6">
             <div class="registration_man">
-                <img class="registration-image" src="{{ asset('img/modal-registration-image.png') }}"
+                <img class="registration-image" src="{{ asset('img/profile.png') }}"
                     alt="image not found">
             </div>
         </div>
@@ -100,6 +100,11 @@
                             {{ old('gender') == 'female' ? 'checked' : '' }}>
                         <label for="female" style="padding-right: 10px;">Female</label>
 
+                        <input type="radio" name="gender" value="other" id="other"
+                            style="margin-left:15px; margin-right: 5px;"
+                            {{ old('gender') == 'other' ? 'checked' : '' }}>
+                        <label for="other" style="padding-right: 10px;">Other</label>
+
                         @error('gender')
                             <br><small class="text-danger">{{ $message }}</small>
                         @enderror
@@ -128,8 +133,8 @@
 
                         <!-- Dynamic Questions Section -->
                         @if(isset($questions) && $questions->count() > 0)
-                            <div class="questions-section" style="margin-bottom: 15px; max-height: 200px; overflow-y: auto; padding: 10px; background-color: #f9f9f9; border-radius: 5px;">
-                                <h5 style="margin-bottom: 10px; color: #333; font-weight: 600;">Profile Questions</h5>
+                            <div class="questions-section" style="margin-bottom: 20px; max-height: 250px; overflow-y: auto; padding: 15px; padding-bottom: 15px; background-color: #f9f9f9; border-radius: 5px; border: 1px solid #eee;">
+                                <h5 style="margin-bottom: 15px; color: #2f3c44; font-weight: bold; font-size: 16px; border-bottom: 1px solid #ddd; padding-bottom: 8px;">Profile Questions</h5>
                                 @foreach($questions as $question)
                                     <div class="form-group" style="margin-bottom: 12px;">
                                         <label style="font-size: 13px; color: #555; margin-bottom: 5px; display: block;">
@@ -140,14 +145,14 @@
                                         </label>
                                         
                                         @if($question->question_type === 'select' && $question->options)
-                                            <select name="questions[{{ $question->id }}]" class="form-control" style="font-size: 13px; padding: 6px;" {{ $question->is_required ? 'required' : '' }}>
+                                            <select name="questions[{{ $question->id }}]" class="form-control" {{ $question->is_required ? 'required' : '' }}>
                                                 <option value="">Select an option</option>
                                                 @foreach($question->options as $option)
                                                     <option value="{{ $option }}">{{ $option }}</option>
                                                 @endforeach
                                             </select>
                                         @elseif($question->question_type === 'textarea')
-                                            <textarea name="questions[{{ $question->id }}]" class="form-control" rows="2" style="font-size: 13px; padding: 6px;" placeholder="Enter your answer..." {{ $question->is_required ? 'required' : '' }}></textarea>
+                                            <textarea name="questions[{{ $question->id }}]" class="form-control" rows="3" placeholder="Enter your answer..." {{ $question->is_required ? 'required' : '' }}></textarea>
                                         @elseif($question->question_type === 'radio' && $question->options)
                                             <div style="padding: 5px 0;">
                                                 @foreach($question->options as $option)
@@ -157,7 +162,7 @@
                                                 @endforeach
                                             </div>
                                         @else
-                                            <input type="text" name="questions[{{ $question->id }}]" class="form-control" style="font-size: 13px; padding: 6px;" placeholder="Enter your answer..." {{ $question->is_required ? 'required' : '' }}>
+                                            <input type="text" name="questions[{{ $question->id }}]" class="form-control" placeholder="Enter your answer..." {{ $question->is_required ? 'required' : '' }}>
                                         @endif
                                         
                                         @error("questions.{$question->id}")
@@ -168,10 +173,33 @@
                             </div>
                         @endif
 
-                        <button type="submit" value="LogIn" class="btn form-control login_btn">Register</button>
+                        <button type="submit" id="registerBtn" class="btn form-control login_btn">
+                            <span id="registerBtnText">Register</span>
+                            <span id="registerBtnLoader" style="display:none;">
+                                <i class="fa fa-spinner fa-spin"></i> Processing...
+                            </span>
+                        </button>
                     </div>
 
                 </form>
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        var registerForm = document.querySelector('#register_form form');
+                        if (registerForm) {
+                            registerForm.addEventListener('submit', function(e) {
+                                var btnText = document.getElementById('registerBtnText');
+                                var btnLoader = document.getElementById('registerBtnLoader');
+                                var btn = document.getElementById('registerBtn');
+                                
+                                if (btnText && btnLoader && btn) {
+                                    btnText.style.display = 'none';
+                                    btnLoader.style.display = 'inline-block';
+                                    btn.disabled = true;
+                                }
+                            });
+                        }
+                    });
+                </script>
                 <img class="mfp-close" src="{{ asset('img/close-btn.png') }}" alt="">
             </div>
         </div>

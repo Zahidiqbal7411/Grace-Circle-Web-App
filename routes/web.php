@@ -41,6 +41,29 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/chat/fetch', [ChatController::class, 'fetchChat'])->name('chat.fetch');
 });
 
+Route::get('email/verify/{id}/{hash}', function ($id, $hash) {
+    $user = User::findOrFail($id);
+
+    if (!hash_equals((string) $hash, sha1($user->email))) {
+        abort(403, 'Invalid verification link.');
+    }
+
+    if (!$user->hasVerifiedEmail()) {
+        $user->markEmailAsVerified();
+    }
+
+    auth()->login($user);
+
+    // Direct redirect to homepage with success message
+    return redirect('/?verified=1');
+})->middleware(['signed'])->name('verification.verify');
+
+Route::get('/email/verify/status', function () {
+    return response()->json([
+        'verified' => auth()->user()->hasVerifiedEmail()
+    ]);
+})->middleware(['auth'])->name('verification.status');
+
 Route::get('/send-test-email', function() {
     // 1. Find the user by the email you want to test
     $user = User::where('email', 'Webtechfusion64@gmail.com')->first();
@@ -55,35 +78,5 @@ Route::get('/send-test-email', function() {
     
     return 'Email sent!';
 });
-
-Route::get('/email/verify/success', function () {
-    $user = null;
-    if (session('verified_user_id')) {
-        $user = User::find(session('verified_user_id'));
-    }
-    return view('auth.verify-success', compact('user'));
-})->name('verification.success');
-
-Route::get('/email/verify/{id}/{hash}', function ($id, $hash) {
-    // 1. Find the user or fail
-    $user = User::findOrFail($id);
-
-    // 2. Verify if the hash matches the user's email
-    if (!hash_equals((string) $hash, sha1($user->email))) {
-        abort(403, 'Invalid verification link.');
-    }
-
-    // 3. Check if already verified
-    if ($user->email_verified_at) {
-        return redirect('/')->with('message', 'Email already verified. Please login.');
-    }
-
-    // 4. Mark as verified by setting email_verified_at to current timestamp
-    $user->email_verified_at = now();
-    $user->save();
-
-    // 5. Redirect to success page with user info
-    return redirect()->route('verification.success')->with('verified_user_id', $user->id);
-})->middleware(['signed'])->name('verification.verify');
 
 require __DIR__.'/auth.php';

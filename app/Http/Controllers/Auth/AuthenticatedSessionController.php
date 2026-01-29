@@ -26,9 +26,19 @@ class AuthenticatedSessionController extends Controller
     {
         $request->authenticate();
 
+        if (Auth::user()->email_status != 1) {
+            Auth::guard('web')->logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            return redirect()->back()->withErrors([
+                'email' => 'Your email is not verified. Please check your inbox for the verification link.',
+            ])->withInput($request->only('email'));
+        }
+
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        return redirect('/')->with('login_success', 'Welcome back, ' . Auth::user()->name . '! You have successfully logged in.');
     }
 
     /**

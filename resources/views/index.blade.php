@@ -210,15 +210,16 @@
                         <div class="download_moblie">
                             <div class="download_m_slider">
                                 <img src="{{ asset('img/mobile-slider/mobile-1.png') }}" alt="">
-                                <div class="download_moblile_slider">
+                                <div class="download_mobile_slider owl-carousel">
+                                    
                                     <div class="item">
                                         <img src="{{ asset('img/mobile-slider/test.jpg') }}" alt="">
                                     </div>
                                     <div class="item">
-                                        <img src="{{ asset('img/mobile-slider/test.jpg') }}" alt="">
+                                        <img src="{{ asset('img/slider-img/slider-2.png') }}" alt="">
                                     </div>
                                     <div class="item">
-                                        <img src="{{ asset('img/mobile-slider/test.jpg') }}" alt="">
+                                        <img src="{{ asset('img/slider-img/slider-1.png') }}" alt="">
                                     </div>
                                 </div>
                             </div>
@@ -556,5 +557,46 @@
 </section>
 
 
+
+@if (session('login_success') || session('reg_success') || request()->query('verified'))
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            let title = '';
+            let text = '';
+            
+            @if (session('login_success'))
+                title = 'Login Successful';
+                text = "{{ session('login_success') }}";
+            @elseif (session('reg_success'))
+                title = 'Registration Successful';
+                text = "{{ session('reg_success') }}";
+            @elseif (request()->query('verified'))
+                title = 'Registration Successfully';
+                text = "Your email is verified successfully";
+            @endif
+
+            Swal.fire({
+                icon: 'success',
+                title: title,
+                text: text,
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                width: '600px',
+                padding: '3em',
+                color: '#2f3c44',
+                background: '#fff',
+                backdrop: `
+                    rgba(0,0,123,0.4)
+                `
+            });
+            
+            // Remove the ?verified=1 from URL so it doesn't show again on refresh
+            if (window.location.search.includes('verified')) {
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+        });
+    </script>
+@endif
 
 @endsection

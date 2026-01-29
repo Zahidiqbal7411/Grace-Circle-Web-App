@@ -37,7 +37,7 @@ class RegisteredUserController extends Controller
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'country' => ['nullable', 'string', 'max:255'],
-            'gender' => ['nullable', 'string', 'in:male,female'],
+            'gender' => ['nullable', 'string', 'in:male,female,other'],
             'birthday' => ['nullable', 'string'],
         ]);
 
@@ -75,6 +75,6 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false));
+        return redirect()->route('verification.notice');
     }
 }

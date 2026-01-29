@@ -19,7 +19,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'name', 'email', 'password', 'gender', 'age', 'country', 'city', 
         'birthday', 'relationship_status', 'looking_for', 'work_as', 
         'education', 'languages', 'interests', 'smoking', 'eye_color', 
-        'religion', 'cast', 'last_seen',
+        'religion', 'cast', 'last_seen', 'email_status',
     ];
 
     protected $hidden = [
@@ -42,6 +42,19 @@ class User extends Authenticatable implements MustVerifyEmail
     public function sendEmailVerificationNotification()
     {
         \Illuminate\Support\Facades\Mail::to($this->email)->send(new \App\Mail\VerifyEmail($this));
+    }
+
+    /**
+     * Mark the given user's email as verified.
+     *
+     * @return bool
+     */
+    public function markEmailAsVerified()
+    {
+        return $this->forceFill([
+            'email_verified_at' => $this->freshTimestamp(),
+            'email_status' => 1,
+        ])->save();
     }
 
     /**
