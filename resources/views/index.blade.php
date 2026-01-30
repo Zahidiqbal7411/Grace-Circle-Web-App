@@ -9,10 +9,10 @@
     <div class="slider_inner">
         <div class="rev_slider" data-version="5.3.0.2" id="home-slider">
             <ul>
-                <!-- Slide 1: Coffee Couple at Church -->
+                <!-- Slide 1 -->
                 <li data-slotamount="7" data-easein="Power4.easeInOut" data-easeout="Power4.easeInOut"
                     data-masterspeed="1200" data-rotate="0" data-saveperformance="off">
-                    <img src="{{ asset('img/slider-img/slider-2.png') }}" alt="Grace Circle Christian Couple"
+                    <img src="{{ asset('img/slider-img/1.png') }}" alt="Grace Circle Christian Couple"
                         style="image-rendering: -webkit-optimize-contrast; image-rendering: high-quality;"
                         data-bgposition="center center" 
                         data-bgfit="cover"
@@ -21,10 +21,10 @@
                         class="rev-slidebg" 
                         data-no-retina>
                 </li>
-                <!-- Slide 2: Community Table Gathering -->
+                <!-- Slide 2 -->
                 <li data-slotamount="7" data-easein="Power4.easeInOut" data-easeout="Power4.easeInOut"
                     data-masterspeed="1200" data-rotate="0" data-saveperformance="off">
-                    <img src="{{ asset('img/banner/banner-bg-1.jpg') }}" alt="Christian Community Gathering"
+                    <img src="{{ asset('img/slider-img/2.png') }}" alt="Grace Circle Christian Couple"
                         style="image-rendering: -webkit-optimize-contrast; image-rendering: high-quality;"
                         data-bgposition="center center" 
                         data-bgfit="cover"
@@ -33,10 +33,46 @@
                         class="rev-slidebg" 
                         data-no-retina>
                 </li>
-                <!-- Slide 3: Outdoor Fellowship Dinner -->
+                <!-- Slide 3 -->
                 <li data-slotamount="7" data-easein="Power4.easeInOut" data-easeout="Power4.easeInOut"
                     data-masterspeed="1200" data-rotate="0" data-saveperformance="off">
-                    <img src="{{ asset('img/banner/banner-bg-2.jpg') }}" alt="Christian Fellowship Dinner"
+                    <img src="{{ asset('img/slider-img/3.png') }}" alt="Grace Circle Christian Couple"
+                        style="image-rendering: -webkit-optimize-contrast; image-rendering: high-quality;"
+                        data-bgposition="center center" 
+                        data-bgfit="cover"
+                        data-bgrepeat="no-repeat" 
+                        data-bgparallax="5" 
+                        class="rev-slidebg" 
+                        data-no-retina>
+                </li>
+                <!-- Slide 4 -->
+                <li data-slotamount="7" data-easein="Power4.easeInOut" data-easeout="Power4.easeInOut"
+                    data-masterspeed="1200" data-rotate="0" data-saveperformance="off">
+                    <img src="{{ asset('img/slider-img/4.png') }}" alt="Grace Circle Christian Couple"
+                        style="image-rendering: -webkit-optimize-contrast; image-rendering: high-quality;"
+                        data-bgposition="center center" 
+                        data-bgfit="cover"
+                        data-bgrepeat="no-repeat" 
+                        data-bgparallax="5" 
+                        class="rev-slidebg" 
+                        data-no-retina>
+                </li>
+                <!-- Slide 5 -->
+                <li data-slotamount="7" data-easein="Power4.easeInOut" data-easeout="Power4.easeInOut"
+                    data-masterspeed="1200" data-rotate="0" data-saveperformance="off">
+                    <img src="{{ asset('img/slider-img/5.png') }}" alt="Grace Circle Christian Couple"
+                        style="image-rendering: -webkit-optimize-contrast; image-rendering: high-quality;"
+                        data-bgposition="center center" 
+                        data-bgfit="cover"
+                        data-bgrepeat="no-repeat" 
+                        data-bgparallax="5" 
+                        class="rev-slidebg" 
+                        data-no-retina>
+                </li>
+                <!-- Slide 6 -->
+                <li data-slotamount="7" data-easein="Power4.easeInOut" data-easeout="Power4.easeInOut"
+                    data-masterspeed="1200" data-rotate="0" data-saveperformance="off">
+                    <img src="{{ asset('img/slider-img/6.png') }}" alt="Grace Circle Christian Couple"
                         style="image-rendering: -webkit-optimize-contrast; image-rendering: high-quality;"
                         data-bgposition="center center" 
                         data-bgfit="cover"
@@ -258,7 +294,7 @@
             </div>
             <div class="col-md-4">
                 <div class="find_soul_item">
-                    <img src="{{ asset('img/slider-img/slider-1.png') }}" alt="" style="border-radius: 50%; width: 120px; height: 120px; object-fit: cover; margin-bottom: 20px;">
+                    <img src="{{ asset('img/slider-img/3.png') }}" alt="" style="border-radius: 50%; width: 120px; height: 120px; object-fit: cover; margin-bottom: 20px;">
                     <h4>Start Dating</h4>
                     <p>Take the next step and build a beautiful relationship centered on grace.</p>
                 </div>

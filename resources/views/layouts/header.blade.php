@@ -182,6 +182,8 @@
                     </div>
 
                 </form>
+
+                
                 <script>
                     document.addEventListener('DOMContentLoaded', function() {
                         var registerForm = document.querySelector('#register_form form');

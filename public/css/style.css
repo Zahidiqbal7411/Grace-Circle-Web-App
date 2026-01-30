@@ -1492,7 +1492,7 @@ h6 {
 /* Welcome area css
 ============================================================================================ */
 .welcome_area {
-  padding: 130px 0px 75px 0px;
+  padding: 40px 0px 75px 0px;
 }
 
 .welcome_area .welcome_title {
@@ -2303,6 +2303,7 @@ h6 {
 ============================================================================================ */
 .slider_area {
   position: relative;
+  margin-top: 77px;
 }
 
 .slider_area .slider_inner .tp-revslider-mainul li {
