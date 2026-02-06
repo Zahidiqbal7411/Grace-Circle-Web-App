@@ -111,15 +111,49 @@
                     </div>
 
                     <div class="form-group">
-                        <div class="datepicker">
-                            <input type='text' class="form-control datetimepicker4" name="birthday"
-                                placeholder="Birthday" value="{{ old('birthday') }}">
-                            <span class="add-on"><i class="fa fa-calendar" aria-hidden="true"></i></span>
+                        <label for="birthday" style="color: #2f3c44; font-weight: bold; margin-bottom: 5px; display: block;">Birthday</label>
+                        <div class="input-group date" id="birthday-wrapper">
+                            <input type='text' class="form-control" name="birthday" id="birthday"
+                                placeholder="Birthday" value="{{ old('birthday') }}" autocomplete="off"
+                                readonly style="background-color: #fff; cursor: pointer;">
+                            <span class="input-group-addon" style="cursor: pointer;">
+                                <i class="fa fa-calendar" aria-hidden="true"></i>
+                            </span>
                         </div>
                         @error('birthday')
                             <small class="text-danger">{{ $message }}</small>
                         @enderror
                     </div>
+                    <style>
+                        .bootstrap-datetimepicker-widget {
+                            z-index: 99999999 !important;
+                        }
+                    </style>
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function() {
+                            function tryInit() {
+                                if (window.jQuery && $.fn.datetimepicker) {
+                                    $('#birthday-wrapper').datetimepicker({
+                                        format: 'DD-MM-YYYY',
+                                        icons: {
+                                            time: "fa fa-clock-o",
+                                            date: "fa fa-calendar",
+                                            up: "fa fa-chevron-up",
+                                            down: "fa fa-chevron-down",
+                                            previous: 'fa fa-chevron-left',
+                                            next: 'fa fa-chevron-right',
+                                            today: 'fa fa-screenshot',
+                                            clear: 'fa fa-trash',
+                                            close: 'fa fa-remove'
+                                        }
+                                    });
+                                } else {
+                                    setTimeout(tryInit, 100);
+                                }
+                            }
+                            tryInit();
+                        });
+                    </script>
 
 
                     <div class="reg_chose form-group">

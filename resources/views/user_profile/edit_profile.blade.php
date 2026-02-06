@@ -363,8 +363,14 @@
 
                                                         <li>
                                                             <label for="birthday2">Birthday</label>
-                                                            <input type="date" id="birthday2" name="birthday"
-                                                                value="{{ \Carbon\Carbon::parse($user->birthday)->format('Y-m-d') }}" />
+                                                            <div class="input-group date" id="birthday-wrapper-edit" style="display: table; width: 100%;">
+                                                                <input type="text" class="form-control" id="birthday2" name="birthday"
+                                                                    value="{{ \Carbon\Carbon::parse($user->birthday)->format('d-m-Y') }}" 
+                                                                    readonly style="background-color: #fff; cursor: pointer; border: none; font-weight: bold;" />
+                                                                <span class="input-group-addon" style="cursor: pointer; background: transparent; border: none; padding: 0 5px;">
+                                                                    <i class="fa fa-calendar" aria-hidden="true"></i>
+                                                                </span>
+                                                            </div>
                                                         </li>
 
                                                         <li>
@@ -704,6 +710,27 @@
                 var castValue = $(this).val(); // Get the selected value
                 autoSave('cast', castValue); // Auto-save the selected caste/sect
             });
+
+            // Initialize Birthday Picker in Edit Profile
+            if (typeof $.fn.datetimepicker !== 'undefined') {
+                $('#birthday-wrapper-edit').datetimepicker({
+                    format: 'DD-MM-YYYY',
+                    icons: {
+                        time: "fa fa-clock-o",
+                        date: "fa fa-calendar",
+                        up: "fa fa-chevron-up",
+                        down: "fa fa-chevron-down",
+                        previous: 'fa fa-chevron-left',
+                        next: 'fa fa-chevron-right',
+                        today: 'fa fa-screenshot',
+                        clear: 'fa fa-trash',
+                        close: 'fa fa-remove'
+                    }
+                }).on('dp.change', function(ev) {
+                    var formattedDate = ev.date ? ev.date.format('YYYY-MM-DD') : '';
+                    autoSave('birthday', formattedDate);
+                });
+            }
 
         });
     </script>

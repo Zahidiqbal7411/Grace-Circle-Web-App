@@ -10,6 +10,8 @@ use App\Http\Controllers\UserProfileController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\FriendController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\StripeController;
+
 
 Route::get('/', function () {
     return view('index');
@@ -40,6 +42,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/chat/store', [ChatController::class, 'store'])->name('chat.store');
     Route::post('/chat/fetch', [ChatController::class, 'fetchChat'])->name('chat.fetch');
 });
+
+
+
+
+Route::get('/checkout', [StripeController::class, 'checkout']);
+Route::post('/checkout', [StripeController::class, 'createSession']);
+Route::get('/success', [StripeController::class, 'success']);
+Route::get('/cancel', [StripeController::class, 'cancel']);
+
 
 Route::get('email/verify/{id}/{hash}', function ($id, $hash) {
     $user = User::findOrFail($id);
@@ -78,5 +89,7 @@ Route::get('/send-test-email', function() {
     
     return 'Email sent!';
 });
+
+
 
 require __DIR__.'/auth.php';
