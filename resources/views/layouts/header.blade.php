@@ -6,19 +6,18 @@
             {{ $errors->first('email') }}
         </div>
     @endif --}}
-    <form action="{{ route('login') }}" method="POST" enctype="multipart/form-data">
+    <form id="loginForm" action="{{ route('login') }}" method="POST" enctype="multipart/form-data">
         @csrf
+        <input type="hidden" name="form_id" value="login">
         <input type="text" placeholder="Email" name="email">
         <input type="password" placeholder="Password" name="password">
         <div class="login_btn_area">
-            <button type="submit" value="LogIn" class="btn form-control login_btn">LogIn</button>
-            {{-- <div class="login_social">
-                <h5>Login With</h5>
-                <ul>
-                    <li><a href="#"><i class="fa fa-facebook"></i></a></li>
-                    <li><a href="#"><i class="fa fa-google-plus"></i></a></li>
-                </ul>
-            </div> --}}
+            <button type="submit" id="loginBtn" class="btn form-control login_btn">
+                <span id="loginBtnText">LogIn</span>
+                <span id="loginBtnLoader" style="display:none;">
+                    <i class="fa fa-spinner fa-spin"></i>
+                </span>
+            </button>
         </div>
     </form>
     <img class="mfp-close" src="{{ asset('img/close-btn.png') }}" alt="">
@@ -36,7 +35,7 @@
         </div>
         <div class="col-md-6">
             <div class="registration_form_s">
-                <h4>Registration</h4>
+                <h4>Registration <small style="font-size: 10px; color: #ccc;">V2.0</small></h4>
 
 
 
@@ -49,8 +48,9 @@
 
 
 
-                <form action="{{ route('register') }}" method="POST" enctype="multipart/form-data">
+                <form id="registrationForm" action="{{ route('register') }}" method="POST" enctype="multipart/form-data">
                     @csrf
+                    <input type="hidden" name="form_id" value="register">
 
                     <div class="form-group">
                         <input type="email" class="form-control" id="reg_email" name="email" placeholder="Email"
@@ -111,15 +111,22 @@
                     </div>
 
                     <div class="form-group">
-                        <div class="datepicker">
-                            <input type='text' class="form-control datetimepicker4" name="birthday"
-                                placeholder="Birthday" value="{{ old('birthday') }}">
-                            <span class="add-on"><i class="fa fa-calendar" aria-hidden="true"></i></span>
-                        </div>
+                        <label for="birthday" style="color: #2f3c44; font-weight: bold; margin-bottom: 5px; display: block;">Birthday</label>
+                        <input type='date' class="form-control" name="birthday" id="birthday"
+                            placeholder="Birthday" value="{{ old('birthday') }}" 
+                            max="{{ date('Y-m-d', strtotime('-18 years')) }}"
+                            style="background-color: #fff; line-height: 1.5; padding: 10px;">
                         @error('birthday')
                             <small class="text-danger">{{ $message }}</small>
                         @enderror
                     </div>
+                    <style>
+                        .bootstrap-datetimepicker-widget {
+                            z-index: 99999999 !important;
+                            display: block !important; /* Ensure it's not hidden by some other CSS */
+                        }
+                    </style>
+
 
 
                     <div class="reg_chose form-group">
@@ -184,42 +191,12 @@
                 </form>
 
                 
-                <script>
-                    document.addEventListener('DOMContentLoaded', function() {
-                        var registerForm = document.querySelector('#register_form form');
-                        if (registerForm) {
-                            registerForm.addEventListener('submit', function(e) {
-                                var btnText = document.getElementById('registerBtnText');
-                                var btnLoader = document.getElementById('registerBtnLoader');
-                                var btn = document.getElementById('registerBtn');
-                                
-                                if (btnText && btnLoader && btn) {
-                                    btnText.style.display = 'none';
-                                    btnLoader.style.display = 'inline-block';
-                                    btn.disabled = true;
-                                }
-                            });
-                        }
-                    });
-                </script>
                 <img class="mfp-close" src="{{ asset('img/close-btn.png') }}" alt="">
             </div>
         </div>
     </div>
 </div>
-@if ($errors->any())
-    <script>
-        $(document).ready(function() {
-            $.magnificPopup.open({
-                items: {
-                    src: '#register_form'
-                },
-                type: 'inline',
-                closeOnBgClick: false
-            });
-        });
-    </script>
-@endif
+
 
 <!--================First Main header Area =================-->
 <header class="header_menu_area">
@@ -385,22 +362,32 @@
         </div><!-- /.container-fluid -->
     </nav>
 </header>
-@if ($errors->has('email') || $errors->has('password'))
+@if ($errors->any())
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            var formId = "{{ old('form_id', 'register') }}";
+            var title = (formId === 'login') ? 'Login Failed' : 'Registration Failed';
+            
             Swal.fire({
                 icon: 'error',
-                title: 'Login Failed',
+                title: title,
                 html: `{!! implode('<br>', $errors->all()) !!}`,
-                confirmButtonText: 'Okay'
+                confirmButtonText: 'Okay',
+                confirmButtonColor: '#e74c3c'
             });
 
-            $.magnificPopup.open({
-                items: {
-                    src: '#small-dialog'
-                },
-                type: 'inline'
-            });
+            if (formId === 'login') {
+                $.magnificPopup.open({
+                    items: { src: '#small-dialog' },
+                    type: 'inline'
+                });
+            } else {
+                $.magnificPopup.open({
+                    items: { src: '#register_form' },
+                    type: 'inline',
+                    closeOnBgClick: false
+                });
+            }
         });
     </script>
 @endif

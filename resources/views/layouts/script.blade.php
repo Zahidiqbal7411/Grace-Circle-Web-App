@@ -64,3 +64,181 @@
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/axios@1.6.7/dist/axios.min.js"></script>
+
+<script>
+    jQuery(document).ready(function($) {
+        // CSRF Token setup for axios
+        axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+        let token = document.head.querySelector('meta[name="csrf-token"]');
+        if (token) {
+            axios.defaults.headers.common['X-CSRF-TOKEN'] = token.content;
+        }
+
+        // Handle Registration Form (Delegated)
+        $(document).on('submit', '#registrationForm', function(e) {
+            e.preventDefault();
+            var $form = $(this);
+            var $btn = $form.find('#registerBtn');
+            var $btnText = $form.find('#registerBtnText');
+            var $btnLoader = $form.find('#registerBtnLoader');
+            var formData = new FormData(this);
+
+            // Show loader
+            if ($btnText.length && $btnLoader.length) {
+                $btnText.hide();
+                $btnLoader.show();
+                $btn.prop('disabled', true);
+            }
+
+            // Clear old errors
+            $form.find('.text-danger').remove();
+
+            axios.post($form.attr('action'), formData)
+                .then(response => {
+                    if (response.data.success) {
+                        $.magnificPopup.close();
+                        Swal.fire({
+                            title: 'Registration Successful!',
+                            text: response.data.message,
+                            icon: 'success',
+                            confirmButtonText: 'OK',
+                            confirmButtonColor: '#e74c3c'
+                        }).then(() => {
+                            if (response.data.redirect) {
+                                window.location.href = response.data.redirect;
+                            }
+                        });
+                    }
+                })
+                .catch(error => {
+                    // Reset button
+                    $btnText.show();
+                    $btnLoader.hide();
+                    $btn.prop('disabled', false);
+
+                    if (error.response && error.response.status === 422) {
+                        var errors = error.response.data.errors;
+                        var errorSummary = [];
+                        var emailTaken = false;
+                        
+                        Object.keys(errors).forEach(function(key) {
+                            var errorMsg = errors[key][0];
+                            errorSummary.push(errorMsg);
+                            if (errorMsg.toLowerCase().includes('already been taken')) emailTaken = true;
+                            
+                            var $input = $form.find('[name="' + key + '"]');
+                            
+                            if (!$input.length && key.includes('.')) {
+                                var parts = key.split('.');
+                                $input = $form.find('[name="questions[' + parts[1] + ']"]');
+                            }
+
+                            if ($input.length) {
+                                $input.closest('.form-group').find('.text-danger').remove();
+                                $('<small class="text-danger" style="display:block;margin-top:5px;">' + errorMsg + '</small>')
+                                    .insertAfter($input.closest('.form-group').find('label').length ? $input.closest('.form-group').find('label') : $input);
+                            }
+                        });
+
+                        // Show SweetAlert Summary
+                        Swal.fire({
+                            title: 'Registration Failed',
+                            html: errorSummary.join('<br>'),
+                            icon: 'error',
+                            showCancelButton: emailTaken,
+                            cancelButtonText: 'Try Another',
+                            confirmButtonText: emailTaken ? 'Login Now instead' : 'Okay',
+                            confirmButtonColor: '#e74c3c'
+                        }).then((result) => {
+                            if (result.isConfirmed && emailTaken) {
+                                $.magnificPopup.open({
+                                    items: { src: '#small-dialog' },
+                                    type: 'inline'
+                                });
+                            }
+                        });
+                        
+                        // Scroll to first error
+                        var $firstError = $form.find('.text-danger').first();
+                        if ($firstError.length) {
+                            $firstError[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }
+                    } else if (error.response && error.response.status === 419) {
+                        Swal.fire({
+                            title: 'Session Expired',
+                            text: 'Your session has expired. Please refresh the page and try again.',
+                            icon: 'warning',
+                            confirmButtonColor: '#e74c3c'
+                        }).then(() => {
+                            window.location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            title: 'Error!',
+                            text: 'Something went wrong. Please try again later.',
+                            icon: 'error',
+                            confirmButtonColor: '#e74c3c'
+                        });
+                    }
+                });
+        });
+
+        // Handle Login Form (Delegated)
+        $(document).on('submit', '#loginForm', function(e) {
+            e.preventDefault();
+            var $form = $(this);
+            var $btn = $form.find('#loginBtn');
+            var $btnText = $form.find('#loginBtnText');
+            var $btnLoader = $form.find('#loginBtnLoader');
+            var formData = new FormData(this);
+
+            if ($btnText.length && $btnLoader.length) {
+                $btnText.hide();
+                $btnLoader.show();
+                $btn.prop('disabled', true);
+            }
+
+            axios.post($form.attr('action'), formData)
+                .then(response => {
+                    if (response.data.success) {
+                        Swal.fire({
+                            title: 'Login Successful!',
+                            text: response.data.message,
+                            icon: 'success',
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(() => {
+                            window.location.href = response.data.redirect || '/';
+                        });
+                    }
+                })
+                .catch(error => {
+                    $btnText.show();
+                    $btnLoader.hide();
+                    $btn.prop('disabled', false);
+
+                    var title = 'Error';
+                    var message = 'Something went wrong. Please try again.';
+                    var icon = 'error';
+
+                    if (error.response) {
+                        if (error.response.status === 403) {
+                            title = 'Verification Required';
+                            message = error.response.data.message;
+                            icon = 'warning';
+                        } else if (error.response.status === 422) {
+                            title = 'Login Failed';
+                            message = Object.values(error.response.data.errors).flat().join('<br>');
+                        }
+                    }
+
+                    Swal.fire({
+                        title: title,
+                        html: message,
+                        icon: icon,
+                        confirmButtonColor: '#e74c3c'
+                    });
+                });
+        });
+    });
+</script>

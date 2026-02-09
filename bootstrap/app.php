@@ -18,6 +18,11 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->web([
             \App\Http\Middleware\TrackUserActivity::class,
         ]);
+        
+        // Register middleware aliases
+        $middleware->alias([
+            'payment.valid' => \App\Http\Middleware\CheckPaymentValidity::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

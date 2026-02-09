@@ -22,7 +22,7 @@ class AuthenticatedSessionController extends Controller
     /**
      * Handle an incoming authentication request.
      */
-    public function store(LoginRequest $request): RedirectResponse
+    public function store(LoginRequest $request): RedirectResponse|\Illuminate\Http\JsonResponse
     {
         $request->authenticate();
 
@@ -31,12 +31,27 @@ class AuthenticatedSessionController extends Controller
             $request->session()->invalidate();
             $request->session()->regenerateToken();
 
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Your email is not verified. Please check your inbox for the verification link.',
+                ], 403);
+            }
+
             return redirect()->back()->withErrors([
                 'email' => 'Your email is not verified. Please check your inbox for the verification link.',
             ])->withInput($request->only('email'));
         }
 
         $request->session()->regenerate();
+
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Welcome back, ' . Auth::user()->name . '! You have successfully logged in.',
+                'redirect' => url('/')
+            ]);
+        }
 
         return redirect('/')->with('login_success', 'Welcome back, ' . Auth::user()->name . '! You have successfully logged in.');
     }

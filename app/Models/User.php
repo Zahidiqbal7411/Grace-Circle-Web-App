@@ -128,4 +128,54 @@ class User extends Authenticatable implements MustVerifyEmail
                     ->withTimestamps();
     }
 
+    /**
+     * Get the payment record for this user.
+     */
+    public function payment()
+    {
+        return $this->hasOne(Payment::class);
+    }
+
+    /**
+     * Check if user has a valid subscription (not expired beyond grace period).
+     */
+    public function hasValidSubscription(): bool
+    {
+        $payment = $this->payment;
+        
+        if (!$payment) {
+            return false;
+        }
+
+        return !$payment->isExpiredBeyondGrace();
+    }
+
+    /**
+     * Check if subscription needs payment (expired beyond grace period).
+     */
+    public function needsPayment(): bool
+    {
+        $payment = $this->payment;
+        
+        if (!$payment) {
+            return true;
+        }
+
+        return $payment->isExpiredBeyondGrace();
+    }
+
+    /**
+     * Get the number of days until subscription expires.
+     */
+    public function subscriptionExpiresInDays(): int
+    {
+        $payment = $this->payment;
+        
+        if (!$payment) {
+            return 0;
+        }
+
+        return $payment->daysUntilExpiry();
+    }
+
 }

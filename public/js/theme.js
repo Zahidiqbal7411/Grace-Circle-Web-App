@@ -28,7 +28,7 @@
     function home_slider() {
         if ($('#home-slider').length) {
             $("#home-slider").revolution({
-                sliderType: "standard",
+                sliderType: "fullscreen",
                 sliderLayout: "fullwidth",
                 dottedOverlay: "none",
                 disableProgressBar: "on",
@@ -73,7 +73,7 @@
                 responsiveLevels: [1240, 1024, 778, 480],
                 visibilityLevels: [1240, 1024, 778, 480],
                 gridwidth: [1240, 1024, 778, 480],
-                gridheight: [550, 500, 450, 350],
+                gridheight: [700, 600, 500, 400],
                 shadow: 0,
                 spinner: "off",
                 stopLoop: "off",
@@ -684,8 +684,39 @@
 
         midClick: true,
         removalDelay: 300,
-        mainClass: 'my-mfp-zoom-in'
+        mainClass: 'my-mfp-zoom-in',
+        callbacks: {
+            open: function () {
+                // initBirthdayPicker(); // Removed to use native date input
+            }
+        }
     });
+
+    // function initBirthdayPicker() {
+    //     console.log("initBirthdayPicker called");
+    //     if ($('#birthday-wrapper').length) {
+    //         console.log("Birthday wrapper found, initializing datetimepicker");
+    //         $('#birthday-wrapper').datetimepicker({
+    //             format: 'DD-MM-YYYY',
+    //             icons: {
+    //                 time: "fa fa-clock-o",
+    //                 date: "fa fa-calendar",
+    //                 up: "fa fa-chevron-up",
+    //                 down: "fa fa-chevron-down",
+    //                 previous: 'fa fa-chevron-left',
+    //                 next: 'fa fa-chevron-right',
+    //                 today: 'fa fa-screenshot',
+    //                 clear: 'fa fa-trash',
+    //                 close: 'fa fa-remove'
+    //             }
+    //         }).on('dp.change', function (ev) {
+    //             console.log("Date changed: ", ev.date);
+    //         });
+    //     } else {
+    //         console.log("Birthday wrapper NOT found");
+    //     }
+    // }
+    // initBirthdayPicker();
 
 
     /*----------------------------------------------------*/
@@ -733,7 +764,8 @@
     /*----------------------------------------------------*/
     /*  Date Picker js
     /*----------------------------------------------------*/
-    $(".form_datetime").datetimepicker({ format: 'dd-mm-yyyy hh:ii' });
+    // Removed old conflicting initialization
+    // $(".form_datetime").datetimepicker({ format: 'dd-mm-yyyy hh:ii' });
 
     /*----------------------------------------------------*/
     /*  Counter up js
@@ -748,10 +780,7 @@
     }
     counterup();
 
-    /*----------------------------------------------------*/
-    /*Date Time Picker*/
-    /*----------------------------------------------------*/
-    $('.datetimepicker4').datetimepicker();
+
 
     /*----------------------------------------------------*/
     /*Price select custome handle*/

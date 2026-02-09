@@ -39,17 +39,17 @@
 
 
     <style>
-        /* Enhanced Navbar Styling */
+        /* Enhanced Navbar Styling with transparency */
         .header_menu_area {
-            position: fixed !important;
+            position: absolute !important;
             top: 0;
             left: 0;
             width: 100%;
             z-index: 1000;
-            background: linear-gradient(135deg, rgba(45, 45, 65, 0.95) 0%, rgba(25, 25, 45, 0.98) 100%) !important;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            background: rgba(25, 25, 45, 0.6) !important;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
         }
         
         .header_menu_area .navbar-default {
@@ -148,12 +148,33 @@
             padding-left: 20px !important;
         }
         
-        /* Fix: Slider with no gap - navbar overlays on slider */
+        /* Fix: Slider covers full area - starts from top, extends behind navbar */
         .slider_area {
             margin-top: 0 !important;
             padding-top: 0 !important;
             position: relative;
             z-index: 1;
+            width: 100%;
+            overflow: hidden;
+        }
+        
+        /* Make slider images cover the full slider area */
+        .slider_area .slider_inner,
+        .slider_area .rev_slider,
+        .slider_area .tp-revslider-mainul,
+        .slider_area .tp-revslider-mainul li {
+            width: 100% !important;
+        }
+        
+        .slider_area #home-slider ul li .tp-bgimg,
+        .slider_area .rev_slider .tp-bgimg,
+        .slider_area .rev-slidebg {
+            background-size: cover !important;
+            background-position: center center !important;
+            object-fit: cover !important;
+            object-position: center center !important;
+            width: 100% !important;
+            height: 100% !important;
         }
         
         /* Affix state styling */

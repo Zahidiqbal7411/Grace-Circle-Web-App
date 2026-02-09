@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Payment;
 use App\Models\Question;
 use App\Models\User;
 use Carbon\Carbon;
@@ -30,7 +31,7 @@ class RegisteredUserController extends Controller
      *
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request): RedirectResponse|\Illuminate\Http\JsonResponse
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
@@ -60,6 +61,14 @@ class RegisteredUserController extends Controller
             'birthday' => $birthday,
         ]);
 
+        // Create free trial payment record for the new user
+        Payment::create([
+            'user_id' => $user->id,
+            'valid_till' => Carbon::now()->addDays(Payment::TRIAL_PERIOD_DAYS),
+            'status' => 'trial',
+            'notes' => 'Free trial - ' . Payment::TRIAL_PERIOD_DAYS . ' days',
+        ]);
+
         // Save question answers if provided
         if ($request->has('questions')) {
             $answers = [];
@@ -74,6 +83,14 @@ class RegisteredUserController extends Controller
         event(new Registered($user));
 
         Auth::login($user);
+
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Registration successful! Please check your email to verify your account.',
+                'redirect' => route('verification.notice')
+            ]);
+        }
 
         return redirect()->route('verification.notice');
     }
