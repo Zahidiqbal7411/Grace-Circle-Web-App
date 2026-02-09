@@ -112,10 +112,21 @@
 
                     <div class="form-group">
                         <label for="birthday" style="color: #2f3c44; font-weight: bold; margin-bottom: 5px; display: block;">Birthday</label>
+<<<<<<< HEAD
                         <input type='date' class="form-control" name="birthday" id="birthday"
                             placeholder="Birthday" value="{{ old('birthday') }}" 
                             max="{{ date('Y-m-d', strtotime('-18 years')) }}"
                             style="background-color: #fff; line-height: 1.5; padding: 10px;">
+=======
+                        <div class="input-group date" id="birthday-wrapper">
+                            <input type='text' class="form-control" name="birthday" id="birthday"
+                                placeholder="Birthday" value="{{ old('birthday') }}" autocomplete="off"
+                                readonly style="background-color: #fff; cursor: pointer;">
+                            <span class="input-group-addon" style="cursor: pointer;">
+                                <i class="fa fa-calendar" aria-hidden="true"></i>
+                            </span>
+                        </div>
+>>>>>>> 0e7b6285ab003cca1543241c5314f3579215412f
                         @error('birthday')
                             <small class="text-danger">{{ $message }}</small>
                         @enderror
@@ -123,10 +134,40 @@
                     <style>
                         .bootstrap-datetimepicker-widget {
                             z-index: 99999999 !important;
+<<<<<<< HEAD
                             display: block !important; /* Ensure it's not hidden by some other CSS */
                         }
                     </style>
 
+=======
+                        }
+                    </style>
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function() {
+                            function tryInit() {
+                                if (window.jQuery && $.fn.datetimepicker) {
+                                    $('#birthday-wrapper').datetimepicker({
+                                        format: 'DD-MM-YYYY',
+                                        icons: {
+                                            time: "fa fa-clock-o",
+                                            date: "fa fa-calendar",
+                                            up: "fa fa-chevron-up",
+                                            down: "fa fa-chevron-down",
+                                            previous: 'fa fa-chevron-left',
+                                            next: 'fa fa-chevron-right',
+                                            today: 'fa fa-screenshot',
+                                            clear: 'fa fa-trash',
+                                            close: 'fa fa-remove'
+                                        }
+                                    });
+                                } else {
+                                    setTimeout(tryInit, 100);
+                                }
+                            }
+                            tryInit();
+                        });
+                    </script>
+>>>>>>> 0e7b6285ab003cca1543241c5314f3579215412f
 
 
                     <div class="reg_chose form-group">

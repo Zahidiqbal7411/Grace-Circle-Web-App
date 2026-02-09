@@ -45,6 +45,7 @@ Route::middleware(['auth', 'verified', 'payment.valid'])->group(function () {
     Route::post('/chat/fetch', [ChatController::class, 'fetchChat'])->name('chat.fetch');
 });
 
+<<<<<<< HEAD
 // Subscription/Payment routes - only require auth (not payment.valid as these are for making payment)
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/subscription/required', [StripeController::class, 'paymentRequired'])->name('subscription.required');
@@ -54,6 +55,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
 });
 
 // Original Stripe routes (kept for backwards compatibility)
+=======
+
+
+
+>>>>>>> 0e7b6285ab003cca1543241c5314f3579215412f
 Route::get('/checkout', [StripeController::class, 'checkout']);
 Route::post('/checkout', [StripeController::class, 'createSession']);
 Route::get('/success', [StripeController::class, 'success']);
@@ -100,6 +106,7 @@ Route::get('/send-test-email', function() {
 
 
 
+<<<<<<< HEAD
 // Helper route to force subscription expiry for testing
 Route::get('/test-expire-subscription', function() {
     $user = auth()->user();
@@ -140,4 +147,6 @@ Route::get('/db-check', function() {
     }
 });
 
+=======
+>>>>>>> 0e7b6285ab003cca1543241c5314f3579215412f
 require __DIR__.'/auth.php';

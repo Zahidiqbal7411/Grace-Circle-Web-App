@@ -687,11 +687,16 @@
         mainClass: 'my-mfp-zoom-in',
         callbacks: {
             open: function () {
+<<<<<<< HEAD
                 // initBirthdayPicker(); // Removed to use native date input
+=======
+                initBirthdayPicker();
+>>>>>>> 0e7b6285ab003cca1543241c5314f3579215412f
             }
         }
     });
 
+<<<<<<< HEAD
     // function initBirthdayPicker() {
     //     console.log("initBirthdayPicker called");
     //     if ($('#birthday-wrapper').length) {
@@ -717,6 +722,33 @@
     //     }
     // }
     // initBirthdayPicker();
+=======
+    function initBirthdayPicker() {
+        console.log("initBirthdayPicker called");
+        if ($('#birthday-wrapper').length) {
+            console.log("Birthday wrapper found, initializing datetimepicker");
+            $('#birthday-wrapper').datetimepicker({
+                format: 'DD-MM-YYYY',
+                icons: {
+                    time: "fa fa-clock-o",
+                    date: "fa fa-calendar",
+                    up: "fa fa-chevron-up",
+                    down: "fa fa-chevron-down",
+                    previous: 'fa fa-chevron-left',
+                    next: 'fa fa-chevron-right',
+                    today: 'fa fa-screenshot',
+                    clear: 'fa fa-trash',
+                    close: 'fa fa-remove'
+                }
+            }).on('dp.change', function (ev) {
+                console.log("Date changed: ", ev.date);
+            });
+        } else {
+            console.log("Birthday wrapper NOT found");
+        }
+    }
+    initBirthdayPicker();
+>>>>>>> 0e7b6285ab003cca1543241c5314f3579215412f
 
 
     /*----------------------------------------------------*/

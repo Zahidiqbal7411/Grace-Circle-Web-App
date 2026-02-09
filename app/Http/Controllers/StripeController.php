@@ -2,15 +2,20 @@
 
 namespace App\Http\Controllers;
 
+<<<<<<< HEAD
 use App\Models\Payment;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+=======
+use Illuminate\Http\Request;
+>>>>>>> 0e7b6285ab003cca1543241c5314f3579215412f
 use Stripe\Stripe;
 use Stripe\Checkout\Session;
 
 class StripeController extends Controller
 {
+<<<<<<< HEAD
     /**
      * Subscription price in cents (e.g., 500 = $5.00 USD)
      */
@@ -142,14 +147,21 @@ class StripeController extends Controller
     /**
      * Shows the checkout page (original implementation).
      */
+=======
+    // This method shows the checkout page
+>>>>>>> 0e7b6285ab003cca1543241c5314f3579215412f
     public function checkout()
     {
         return view('stripe.checkout');
     }
 
+<<<<<<< HEAD
     /**
      * Creates a Stripe checkout session and redirects the user (original implementation).
      */
+=======
+    // This method creates a Stripe checkout session and redirects the user
+>>>>>>> 0e7b6285ab003cca1543241c5314f3579215412f
     public function createSession(Request $request)
     {
         Stripe::setApiKey(config('services.stripe.secret'));
@@ -162,7 +174,11 @@ class StripeController extends Controller
                     'product_data' => [
                         'name' => 'Test Product',
                     ],
+<<<<<<< HEAD
                     'unit_amount' => 1000,
+=======
+                    'unit_amount' => 1000, // 10 USD in cents
+>>>>>>> 0e7b6285ab003cca1543241c5314f3579215412f
                 ],
                 'quantity' => 1,
             ]],
@@ -174,17 +190,25 @@ class StripeController extends Controller
         return redirect($session->url);
     }
 
+<<<<<<< HEAD
     /**
      * Shows payment success page (original implementation).
      */
+=======
+    // Shows payment success page
+>>>>>>> 0e7b6285ab003cca1543241c5314f3579215412f
     public function success()
     {
         return view('stripe.success');
     }
 
+<<<<<<< HEAD
     /**
      * Shows payment cancel page (original implementation).
      */
+=======
+    // Shows payment cancel page
+>>>>>>> 0e7b6285ab003cca1543241c5314f3579215412f
     public function cancel()
     {
         return view('stripe.cancel');
