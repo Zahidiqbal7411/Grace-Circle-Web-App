@@ -16,7 +16,7 @@ use App\Http\Controllers\StripeController;
 
 Route::get('/', function () {
     return view('index');
-});
+})->middleware(['payment.valid'])->name('home');
 
 // Protected routes - require auth, verified email, AND valid payment
 Route::middleware(['auth', 'verified', 'payment.valid'])->group(function () {
@@ -42,10 +42,10 @@ Route::middleware(['auth', 'verified', 'payment.valid'])->group(function () {
     Route::get('/chat', [ChatController::class, 'chat_create'])->name('chat');
     Route::post('/chat/messages', [ChatController::class, 'getMessages'])->name('chat.messages');
     Route::post('/chat/store', [ChatController::class, 'store'])->name('chat.store');
-    Route::post('/chat/fetch', [ChatController::class, 'fetchChat'])->name('chat.fetch');
+    Route::get('/profile/questions', [UserProfileController::class, 'getQuestions'])->name('profile.questions');
+    Route::post('/profile/complete', [UserProfileController::class, 'completeProfile'])->name('profile.complete');
 });
 
-<<<<<<< HEAD
 // Subscription/Payment routes - only require auth (not payment.valid as these are for making payment)
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/subscription/required', [StripeController::class, 'paymentRequired'])->name('subscription.required');
@@ -55,11 +55,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
 });
 
 // Original Stripe routes (kept for backwards compatibility)
-=======
-
-
-
->>>>>>> 0e7b6285ab003cca1543241c5314f3579215412f
 Route::get('/checkout', [StripeController::class, 'checkout']);
 Route::post('/checkout', [StripeController::class, 'createSession']);
 Route::get('/success', [StripeController::class, 'success']);
@@ -67,7 +62,11 @@ Route::get('/cancel', [StripeController::class, 'cancel']);
 
 
 Route::get('email/verify/{id}/{hash}', function ($id, $hash) {
-    $user = User::findOrFail($id);
+    $user = User::find($id);
+
+    if (!$user) {
+        return redirect()->route('home')->with('error', 'This verification link is for an account that no longer exists. Please register again.');
+    }
 
     if (!hash_equals((string) $hash, sha1($user->email))) {
         abort(403, 'Invalid verification link.');
@@ -79,14 +78,14 @@ Route::get('email/verify/{id}/{hash}', function ($id, $hash) {
 
     auth()->login($user);
 
-    // Direct redirect to homepage with success message
-    return redirect('/?verified=1');
+    // Land on the sync page to signal the old tab to close
+    return redirect()->route('verification.notice', ['sync' => 1]);
 })->middleware(['signed'])->name('verification.verify');
 
 Route::get('/email/verify/status', function () {
     return response()->json([
-        'verified' => auth()->user()->hasVerifiedEmail()
-    ]);
+        'verified' => (bool) (auth()->user() ? auth()->user()->hasVerifiedEmail() : false)
+    ])->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
 })->middleware(['auth'])->name('verification.status');
 
 Route::get('/send-test-email', function() {
@@ -106,7 +105,6 @@ Route::get('/send-test-email', function() {
 
 
 
-<<<<<<< HEAD
 // Helper route to force subscription expiry for testing
 Route::get('/test-expire-subscription', function() {
     $user = auth()->user();
@@ -146,7 +144,4 @@ Route::get('/db-check', function() {
         return response()->json(['error' => $e->getMessage()]);
     }
 });
-
-=======
->>>>>>> 0e7b6285ab003cca1543241c5314f3579215412f
 require __DIR__.'/auth.php';

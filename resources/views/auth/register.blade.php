@@ -110,43 +110,7 @@
             <x-input-error :messages="$errors->get('birthday')" class="mt-2" />
         </div>
 
-        <!-- Profile Questions -->
-        @if(isset($questions) && $questions->count() > 0)
-            <div class="mt-6 p-4 rounded border border-gray-200" style="background-color: #f9fafb;">
-                <h3 class="text-lg font-semibold mb-4 border-bottom pb-2">Profile Questions</h3>
-                <div style="max-height: 300px; overflow-y: auto;">
-                    @foreach($questions as $question)
-                        <div class="mb-4">
-                            <label class="block text-sm font-medium text-gray-700">
-                                {{ $question->question_text }} @if($question->is_required) <span class="text-red-500">*</span> @endif
-                            </label>
-                            
-                            @if($question->question_type === 'select' && $question->options)
-                                <select name="questions[{{ $question->id }}]" class="block mt-1 w-full rounded-md border-gray-300">
-                                    <option value="">Select an option</option>
-                                    @foreach($question->options as $option)
-                                        <option value="{{ $option }}">{{ $option }}</option>
-                                    @endforeach
-                                </select>
-                            @elseif($question->question_type === 'textarea')
-                                <textarea name="questions[{{ $question->id }}]" class="block mt-1 w-full rounded-md border-gray-300" rows="3"></textarea>
-                            @elseif($question->question_type === 'radio' && $question->options)
-                                <div class="mt-2 space-x-4">
-                                    @foreach($question->options as $option)
-                                        <label class="inline-flex items-center">
-                                            <input type="radio" name="questions[{{ $question->id }}]" value="{{ $option }}">
-                                            <span class="ml-2 text-sm">{{ $option }}</span>
-                                        </label>
-                                    @endforeach
-                                </div>
-                            @else
-                                <input type="text" name="questions[{{ $question->id }}]" class="block mt-1 w-full rounded-md border-gray-300">
-                            @endif
-                        </div>
-                    @endforeach
-                </div>
-            </div>
-        @endif
+        <!-- Profile Questions removed from registration - now in post-login profile completion -->
 
         <div class="flex items-center justify-end mt-4">
             <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800" href="{{ route('login') }}">

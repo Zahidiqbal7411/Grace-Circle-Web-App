@@ -261,6 +261,293 @@
                 -webkit-transform: scale(1.05) translateZ(0);
             }
         }
+
+        /* Awesome Profile Completion Styles */
+        .profile-alert-bar {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 12px 0;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            position: sticky;
+            top: 0;
+            z-index: 10000;
+            border-bottom: 2px solid #764ba2;
+            animation: slideDown 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        @keyframes slideDown {
+            from { transform: translateY(-100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .profile-alert-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 25px;
+        }
+        .profile-alert-text {
+            color: #2f3c44;
+            font-weight: 500;
+            font-size: 15px;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .profile-alert-text i {
+            color: #764ba2;
+            font-size: 20px;
+        }
+        .btn-complete-profile {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white !important;
+            padding: 10px 30px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: none;
+            box-shadow: 0 4px 15px rgba(118, 75, 162, 0.4);
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 1px;
+            animation: pulse-glow 2s infinite;
+        }
+        @keyframes pulse-glow {
+            0% { box-shadow: 0 0 0 0 rgba(118, 75, 162, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(118, 75, 162, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(118, 75, 162, 0); }
+        }
+        .btn-complete-profile:hover {
+            transform: scale(1.05) translateY(-2px);
+            box-shadow: 0 8px 25px rgba(118, 75, 162, 0.5);
+        }
+        
+        /* Premium Modal Design */
+        #completeProfileModal .modal-dialog {
+            max-width: 1100px;
+            width: 95%;
+            margin: 30px auto;
+        }
+        #completeProfileModal .modal-content {
+            border-radius: 30px;
+            border: none;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            background: #fff;
+        }
+        #completeProfileModal .modal-header {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: white;
+            padding: 35px 40px;
+            border: none;
+            position: relative;
+        }
+        #completeProfileModal .modal-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2, #ff9a9e);
+        }
+        #completeProfileModal .modal-title {
+            font-weight: 800;
+            font-size: 28px;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        #completeProfileModal .modal-title i {
+            color: #667eea;
+        }
+        
+        /* Progress Indicator */
+        .profile-progress-wrapper {
+            padding: 0 40px;
+            margin-top: -15px;
+            position: relative;
+            z-index: 10;
+        }
+        .profile-progress-container {
+            background: #f0f2f5;
+            height: 10px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .profile-progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transition: width 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+            border-radius: 10px;
+        }
+        .progress-text {
+            font-size: 13px;
+            font-weight: 700;
+            color: #764ba2;
+            margin-top: 8px;
+            display: block;
+            text-align: right;
+        }
+
+        #completeProfileModal .questions-container {
+            max-height: 550px;
+            overflow-y: auto;
+            padding: 40px;
+            scrollbar-width: thin;
+            scrollbar-color: #764ba2 #f8f9fa;
+        }
+        #completeProfileModal .questions-container::-webkit-scrollbar {
+            width: 8px;
+        }
+        #completeProfileModal .questions-container::-webkit-scrollbar-track {
+            background: #f8f9fa;
+        }
+        #completeProfileModal .questions-container::-webkit-scrollbar-thumb {
+            background: #764ba2;
+            border-radius: 10px;
+            border: 2px solid #f8f9fa;
+        }
+        
+        #completeProfileModal .question-group {
+            margin-bottom: 40px;
+        }
+        #completeProfileModal .category-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        #completeProfileModal .category-icon {
+            width: 45px;
+            height: 45px;
+            background: rgba(118, 75, 162, 0.1);
+            color: #764ba2;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+        #completeProfileModal .category-title {
+            color: #1a1a2e;
+            font-weight: 800;
+            font-size: 20px;
+            margin: 0;
+            flex-grow: 1;
+        }
+        
+        #completeProfileModal .questions-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+        @media (max-width: 1050px) {
+            #completeProfileModal .questions-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        @media (max-width: 700px) {
+            #completeProfileModal .questions-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        #completeProfileModal .question-card {
+            background: #fff;
+            padding: 25px;
+            border-radius: 20px;
+            border: 1px solid #f0f0f0;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+        }
+        #completeProfileModal .question-card:hover {
+            border-color: #667eea;
+            transform: translateY(-5px);
+            box-shadow: 0 12px 20px rgba(102, 126, 234, 0.1);
+        }
+        #completeProfileModal .question-label {
+            font-weight: 700;
+            color: #2d3748;
+            font-size: 16px;
+            line-height: 1.6;
+            min-height: 50px;
+        }
+        #completeProfileModal .question-options {
+            display: flex;
+            gap: 12px;
+        }
+        #completeProfileModal .option-btn {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #edf2f7;
+            border-radius: 12px;
+            background: #fff;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            text-align: center;
+            font-weight: 700;
+            color: #718096;
+            font-size: 14px;
+        }
+        #completeProfileModal .option-btn[data-value="Yes"]:hover {
+            border-color: #48bb78;
+            color: #48bb78;
+            background: rgba(72, 187, 120, 0.05);
+        }
+        #completeProfileModal .option-btn[data-value="No"]:hover {
+            border-color: #f56565;
+            color: #f56565;
+            background: rgba(245, 101, 101, 0.05);
+        }
+        #completeProfileModal .option-btn.active[data-value="Yes"] {
+            background: #48bb78;
+            color: white;
+            border-color: #48bb78;
+            box-shadow: 0 4px 12px rgba(72, 187, 120, 0.3);
+        }
+        #completeProfileModal .option-btn.active[data-value="No"] {
+            background: #f56565;
+            color: white;
+            border-color: #f56565;
+            box-shadow: 0 4px 12px rgba(245, 101, 101, 0.3);
+        }
+        
+        #completeProfileModal .modal-footer {
+            padding: 30px 40px;
+            border-top: 1px solid #edf2f7;
+            background: #f8fafc;
+        }
+        #completeProfileModal .btn-save-profile {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 18px 40px;
+            border-radius: 18px;
+            font-weight: 800;
+            border: none;
+            width: 100%;
+            font-size: 18px;
+            letter-spacing: 0.5px;
+            box-shadow: 0 10px 20px rgba(118, 75, 162, 0.3);
+            transition: all 0.3s;
+        }
+        #completeProfileModal .btn-save-profile:active {
+            transform: scale(0.98);
+        }
+        #completeProfileModal .btn-save-profile:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            background: #cbd5e0;
+            box-shadow: none;
+        }
     </style>
 
 

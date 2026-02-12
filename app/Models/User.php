@@ -19,7 +19,8 @@ class User extends Authenticatable implements MustVerifyEmail
         'name', 'email', 'password', 'gender', 'age', 'country', 'city', 
         'birthday', 'relationship_status', 'looking_for', 'work_as', 
         'education', 'languages', 'interests', 'smoking', 'eye_color', 
-        'religion', 'cast', 'last_seen', 'email_status',
+        'religion', 'cast', 'last_seen', 'email_status', 'email_verified_at',
+        'profile_status',
     ];
 
     protected $hidden = [
@@ -36,12 +37,59 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
-     * Send the email verification notification.
-     * Overriding to use our custom VerifyEmail mailable.
+     * Send the email verification notification with Triple-Retry Logic.
+     * Mode 1: Native PHP mail() [Most reliable on Shared Hosting/cPanel]
+     * Mode 2: Laravel Mailer [SMTP/Default]
+     * Mode 3: Sendmail [Fallback]
      */
     public function sendEmailVerificationNotification()
     {
-        \Illuminate\Support\Facades\Mail::to($this->email)->send(new \App\Mail\VerifyEmail($this));
+        $to = $this->email;
+        $subject = 'Verify Your Email Address';
+        $mailable = new \App\Mail\VerifyEmail($this);
+        $fromEmail = config('mail.from.address', 'noreply@gracecircle.com');
+        $fromName = config('mail.from.name', 'Grace Circle');
+
+        \Log::info("Starting Triple-Retry email delivery for: $to");
+
+        // Mode 1: Native PHP mail() - Usually bypasses external SMTP blockers
+        try {
+            $url = $this->verificationUrl();
+            $htmlContent = view('emails.verify', ['user' => $this, 'verificationUrl' => $url])->render();
+            
+            $headers = "MIME-Version: 1.0" . "\r\n";
+            $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
+            $headers .= "From: $fromName <$fromEmail>" . "\r\n";
+            $headers .= "Reply-To: $fromEmail" . "\r\n";
+            $headers .= "X-Mailer: PHP/" . phpversion();
+
+            if (@mail($to, $subject, $htmlContent, $headers)) {
+                \Log::info("Mode 1: Verification email sent successfully via Native PHP mail() to: $to");
+                return;
+            } else {
+                \Log::warning("Mode 1: Native PHP mail() returned false for $to. Moving to Mode 2.");
+            }
+        } catch (\Exception $e) {
+            \Log::warning("Mode 1: Native PHP mail() exception for $to: " . $e->getMessage() . ". Moving to Mode 2.");
+        }
+
+        // Mode 2: Laravel Default Mailer (SMTP / Failover)
+        try {
+            \Illuminate\Support\Facades\Mail::to($to)->send($mailable);
+            \Log::info("Mode 2: Verification email sent successfully via Laravel Default Mailer to: $to");
+            return;
+        } catch (\Exception $e) {
+            \Log::warning("Mode 2: Laravel Default Mailer failed for $to: " . $e->getMessage() . ". Moving to Mode 3.");
+        }
+
+        // Mode 3: Sendmail Fallback
+        try {
+            \Illuminate\Support\Facades\Mail::mailer('sendmail')->to($to)->send($mailable);
+            \Log::info("Mode 3: Verification email sent successfully via Sendmail to: $to");
+            return;
+        } catch (\Exception $e) {
+            \Log::error("All email verification attempts (Mode 1, 2, 3) failed for $to. Final check your server mail configuration. Error: " . $e->getMessage());
+        }
     }
 
     /**
@@ -53,7 +101,7 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->forceFill([
             'email_verified_at' => $this->freshTimestamp(),
-            'email_status' => 1,
+            'email_status' => '1',
         ])->save();
     }
 

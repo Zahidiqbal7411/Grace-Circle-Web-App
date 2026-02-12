@@ -4,6 +4,7 @@
 
 
 @section('content')
+
 <!--================Slider Reg Area =================-->
 <section class="slider_area">
     <div class="slider_inner">
@@ -591,48 +592,5 @@
         </div>
     </div>
 </section>
-
-
-
-@if (session('login_success') || session('reg_success') || request()->query('verified'))
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            let title = '';
-            let text = '';
-            
-            @if (session('login_success'))
-                title = 'Login Successful';
-                text = "{{ session('login_success') }}";
-            @elseif (session('reg_success'))
-                title = 'Registration Successful';
-                text = "{{ session('reg_success') }}";
-            @elseif (request()->query('verified'))
-                title = 'Registration Successfully';
-                text = "Your email is verified successfully";
-            @endif
-
-            Swal.fire({
-                icon: 'success',
-                title: title,
-                text: text,
-                showConfirmButton: false,
-                timer: 3000,
-                timerProgressBar: true,
-                width: '600px',
-                padding: '3em',
-                color: '#2f3c44',
-                background: '#fff',
-                backdrop: `
-                    rgba(0,0,123,0.4)
-                `
-            });
-            
-            // Remove the ?verified=1 from URL so it doesn't show again on refresh
-            if (window.location.search.includes('verified')) {
-                window.history.replaceState({}, document.title, window.location.pathname);
-            }
-        });
-    </script>
-@endif
 
 @endsection

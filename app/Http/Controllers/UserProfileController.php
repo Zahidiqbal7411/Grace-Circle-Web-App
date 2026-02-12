@@ -8,8 +8,57 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+use App\Models\Question;
+use Illuminate\Support\Facades\DB;
+
 class UserProfileController extends Controller
 {
+    /**
+     * Get all active questions grouped by category.
+     */
+    public function getQuestions()
+    {
+        $questions = Question::where('is_active', true)
+            ->orderBy('display_order')
+            ->get()
+            ->groupBy('category');
+
+        return response()->json([
+            'success' => true,
+            'questions' => $questions
+        ]);
+    }
+
+    /**
+     * Save profile questions and update status.
+     */
+    public function completeProfile(Request $request)
+    {
+        $user = Auth::user();
+        
+        $request->validate([
+            'questions' => 'required|array',
+        ]);
+
+        $answers = [];
+        foreach ($request->questions as $questionId => $answer) {
+            if (!empty($answer)) {
+                $answers[$questionId] = ['answer_text' => $answer];
+            }
+        }
+
+        // Use a transaction to ensure both updates happen
+        DB::transaction(function () use ($user, $answers) {
+            $user->questions()->sync($answers);
+            $user->update(['profile_status' => 1]);
+        });
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Profile completed successfully!'
+        ]);
+    }
+
     public function profile_edit($id)
     {
         $user = User::with('galleries')->findOrFail($id);

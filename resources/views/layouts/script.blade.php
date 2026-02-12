@@ -240,5 +240,321 @@
                     });
                 });
         });
+
+        // Subscription Warnings & Popups
+        @if(session('subscription_warning'))
+            Swal.fire({
+                title: 'Subscription Expired',
+                text: 'Your subscription expired {{ session('subscription_days_expired') }} days ago. You are currently in a 3-day grace period.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Renew Now',
+                cancelButtonText: 'Later',
+                confirmButtonColor: '#27ae60'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = "{{ route('subscription.required') }}";
+                }
+            });
+        @endif
+
+        @if(session('subscription_expiring_soon'))
+            Swal.fire({
+                title: 'Trial Ending Soon',
+                text: 'Your access will expire within {{ session('subscription_days_left') <= 0 ? 'a few hours' : '1 day' }}. Subscribe now to keep your premium access!',
+                icon: 'info',
+                showCancelButton: true,
+                confirmButtonText: 'Upgrade Now',
+                cancelButtonText: 'Remind Me Later',
+                confirmButtonColor: '#27ae60'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = "{{ route('subscription.required') }}";
+                }
+            });
+        @endif
+
+        @if(session('success'))
+            Swal.fire({
+                title: 'Success!',
+                text: "{{ session('success') }}",
+                icon: 'success',
+                confirmButtonColor: '#27ae60'
+            });
+        @endif
+
+        @if(session('error'))
+            Swal.fire({
+                title: 'Error!',
+                text: "{{ session('error') }}",
+                icon: 'error',
+                confirmButtonColor: '#e74c3c'
+            });
+        @endif
     });
 </script>
+
+@if (auth()->check())
+<script>
+    // Professional Verification Sync
+    (function() {
+        // Use the same channel as verify-email.blade.php
+        const channel = window.BroadcastChannel ? new BroadcastChannel('email_verification') : null;
+        
+        function handleGlobalVerified() {
+            // Priority 1: If the page has THE_SIMPLE_TRICK, run the closure logic
+            if (typeof THE_SIMPLE_TRICK === 'function') {
+                THE_SIMPLE_TRICK();
+                return;
+            }
+
+            // Priority 2: If on verify-email but function missing (rare), redirect
+            if (window.location.pathname.includes('verify-email')) {
+                window.location.href = '{{ route("home") }}?verified=1';
+            } else {
+                // Priority 3: Normal pages (like Home) refresh to update UI
+                window.location.reload();
+            }
+        }
+
+        if (channel) {
+            channel.onmessage = (event) => {
+                if (event.data === 'verified') handleGlobalVerified();
+            };
+        }
+
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'grace_verify_signal') handleGlobalVerified();
+        });
+
+        // Professional Polling Method (Every 4 seconds)
+        @if(!auth()->user()->hasVerifiedEmail())
+        setInterval(async () => {
+            try {
+                const res = await fetch('{{ route("verification.status") }}');
+                const data = await res.json();
+                if (data.verified) handleGlobalVerified();
+            } catch(e) {}
+        }, 4000);
+        @endif
+    })();
+</script>
+@endif
+
+@if (auth()->check() && auth()->user()->profile_status == 0 && auth()->user()->hasVerifiedEmail())
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const modal = $('#completeProfileModal');
+        const questionsList = document.getElementById('questionsList');
+        const completeForm = document.getElementById('completeProfileForm');
+        const progressBar = document.getElementById('profileProgressBar');
+        const progressText = document.getElementById('progressText');
+
+        if (!modal.length || !questionsList || !completeForm) return;
+
+        const categoryIcons = {
+            'Personal': 'user',
+            'Spiritual': 'pray',
+            'Lifestyle': 'glass-cheers',
+            'Values': 'balance-scale',
+            'Default': 'question-circle',
+            'Authority over darkness': 'shield-alt',
+            'Spiritual sensitivity': 'wind',
+            'Divine direction': 'compass',
+            'Knowing God': 'bible'
+        };
+
+        function updateProgress() {
+            const total = $('#questionsList input[type="hidden"]').length;
+            const answered = $('#questionsList input[type="hidden"]').filter(function() {
+                return $(this).val() !== '';
+            }).length;
+            
+            const percent = total > 0 ? Math.round((answered / total) * 100) : 0;
+            progressBar.style.width = percent + '%';
+            progressText.innerText = percent + '% Completed';
+            
+            if (percent === 100) {
+                progressText.innerHTML = '✨ All Set! Ready to complete.';
+                progressText.style.color = '#48bb78';
+            } else {
+                progressText.style.color = '#764ba2';
+            }
+        }
+
+        // Load questions when modal is opened
+        modal.on('show.bs.modal', function() {
+            if (questionsList.innerHTML.includes('fa-circle-notch') || questionsList.innerHTML === '') {
+                fetch('{{ route("profile.questions") }}')
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            let html = '';
+                            for (const [category, questions] of Object.entries(data.questions)) {
+                                const icon = categoryIcons[category] || categoryIcons['Default'];
+                                html += `
+                                    <div class="question-group">
+                                        <div class="category-header">
+                                            <div class="category-icon"><i class="fa fa-${icon}"></i></div>
+                                            <h4 class="category-title">${category}</h4>
+                                        </div>
+                                        <div class="questions-grid">
+                                `;
+                                questions.forEach(q => {
+                                    html += `
+                                        <div class="question-card">
+                                            <label class="question-label">${q.question_text}</label>
+                                            <div class="question-options" data-question-id="${q.id}">
+                                                <input type="hidden" name="questions[${q.id}]" value="">
+                                                <button type="button" class="option-btn" data-value="Yes">Yes</button>
+                                                <button type="button" class="option-btn" data-value="No">No</button>
+                                            </div>
+                                        </div>
+                                    `;
+                                });
+                                html += `</div></div>`;
+                            }
+                            questionsList.innerHTML = html;
+
+                            // Handle option selection
+                            $('.option-btn').on('click', function() {
+                                const parent = $(this).closest('.question-options');
+                                parent.find('.option-btn').removeClass('active');
+                                $(this).addClass('active');
+                                parent.find('input').val($(this).data('value'));
+                                updateProgress();
+                                
+                                // Visual feedback on card
+                                $(this).closest('.question-card').css('border-color', '#48bb78');
+                                $(this).closest('.question-card').css('background-color', 'rgba(72, 187, 120, 0.02)');
+                            });
+                            
+                            updateProgress();
+                        }
+                    })
+                    .catch(err => {
+                        questionsList.innerHTML = '<div class="alert alert-danger text-center p-5"><h4>Connection error.</h4><p>Please check your internet and try again.</p></div>';
+                    });
+            }
+        });
+
+        // Handle Form Submission
+        completeForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Validate all questions answered
+            let allAnswered = true;
+            let firstUnanswered = null;
+
+            $('#questionsList input[type="hidden"]').each(function() {
+                if ($(this).val() === '') {
+                    allAnswered = false;
+                    $(this).closest('.question-card').css('border-color', '#f56565');
+                    $(this).closest('.question-card').css('background-color', 'rgba(245, 101, 101, 0.05)');
+                    if (!firstUnanswered) firstUnanswered = $(this).closest('.question-card');
+                }
+            });
+
+            if (!allAnswered) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Incomplete Answers',
+                    text: 'Please answer all questions to build your spiritual profile!',
+                    confirmButtonColor: '#764ba2'
+                });
+                
+                if (firstUnanswered) {
+                    $('.questions-container').animate({
+                        scrollTop: firstUnanswered.position().top + $('.questions-container').scrollTop() - 50
+                    }, 800);
+                }
+                return;
+            }
+
+            const btn = document.getElementById('saveProfileBtn');
+            const text = document.getElementById('saveBtnText');
+            const loader = document.getElementById('saveBtnLoader');
+
+            btn.disabled = true;
+            text.classList.add('d-none');
+            loader.classList.remove('d-none');
+
+            const formData = new FormData(completeForm);
+            
+            axios.post('{{ route("profile.complete") }}', formData)
+                .then(res => {
+                    if (res.data.success) {
+                        modal.modal('hide');
+                        $('.profile-alert-bar').fadeOut(800);
+                        
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Congratulations!',
+                            text: res.data.message,
+                            confirmButtonColor: '#764ba2',
+                            background: '#fff url(/img/confetti.gif)',
+                            timer: 5000,
+                            timerProgressBar: true
+                        });
+                    }
+                })
+                .catch(err => {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'We couldn\'t save your profile. Please try once more.',
+                    });
+                })
+                .finally(() => {
+                    btn.disabled = false;
+                    text.classList.remove('d-none');
+                    loader.classList.add('d-none');
+                });
+        });
+    });
+</script>
+@endif
+
+@if (session('login_success') || session('reg_success') || session('success') || request()->query('verified'))
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        let title = '';
+        let text = '';
+        
+        @if (session('login_success'))
+            title = 'Login Successful';
+            text = "{{ session('login_success') }}";
+        @elseif (session('success'))
+            title = 'Payment Successful';
+            text = "{{ session('success') }}";
+        @elseif (session('reg_success'))
+            title = 'Registration Successful';
+            text = "{{ session('reg_success') }}";
+        @elseif (request()->query('verified'))
+            title = 'Registration Successful!';
+            text = "Your email has been verified successfully!";
+        @endif
+
+        Swal.fire({
+            icon: 'success',
+            title: title,
+            text: text,
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            width: '600px',
+            padding: '3em',
+            color: '#2f3c44',
+            background: '#fff',
+            backdrop: `
+                rgba(0,0,123,0.4)
+            `
+        });
+        
+        // Remove the ?verified=1 from URL so it doesn't show again on refresh
+        if (window.location.search.includes('verified')) {
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
+    });
+</script>
+@endif

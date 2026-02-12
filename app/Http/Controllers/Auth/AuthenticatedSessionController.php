@@ -27,33 +27,34 @@ class AuthenticatedSessionController extends Controller
         $request->authenticate();
 
         if (Auth::user()->email_status != 1) {
-            Auth::guard('web')->logout();
-            $request->session()->invalidate();
-            $request->session()->regenerateToken();
-
+            // Do NOT logout here. The 'verified' middleware on protected routes will handle the restriction.
+            // Just redirect them to the verification notice page.
+            
             if ($request->ajax()) {
                 return response()->json([
-                    'success' => false,
-                    'message' => 'Your email is not verified. Please check your inbox for the verification link.',
-                ], 403);
+                    'success' => true,
+                    'message' => 'Please verify your email address.',
+                    'redirect' => route('verification.notice')
+                ]);
             }
 
-            return redirect()->back()->withErrors([
-                'email' => 'Your email is not verified. Please check your inbox for the verification link.',
-            ])->withInput($request->only('email'));
+            return redirect()->route('verification.notice');
         }
 
         $request->session()->regenerate();
+        
+        // Force refresh auth user data to ensure dashboard loads properly
+        auth()->setUser(Auth::user()->fresh());
 
         if ($request->ajax()) {
             return response()->json([
                 'success' => true,
                 'message' => 'Welcome back, ' . Auth::user()->name . '! You have successfully logged in.',
-                'redirect' => url('/')
+                'redirect' => route('dashboard')
             ]);
         }
 
-        return redirect('/')->with('login_success', 'Welcome back, ' . Auth::user()->name . '! You have successfully logged in.');
+        return redirect()->intended(route('dashboard'))->with('login_success', 'Welcome back, ' . Auth::user()->name . '! You have successfully logged in.');
     }
 
     /**

@@ -69,18 +69,13 @@ class RegisteredUserController extends Controller
             'notes' => 'Free trial - ' . Payment::TRIAL_PERIOD_DAYS . ' days',
         ]);
 
-        // Save question answers if provided
-        if ($request->has('questions')) {
-            $answers = [];
-            foreach ($request->questions as $questionId => $answer) {
-                if (!empty($answer)) {
-                    $answers[$questionId] = ['answer_text' => $answer];
-                }
-            }
-            $user->questions()->attach($answers);
-        }
+        // Profile questions are now handled separately after login
 
-        event(new Registered($user));
+        try {
+            event(new Registered($user));
+        } catch (\Exception $e) {
+            \Log::error('Registration email failed to send: ' . $e->getMessage());
+        }
 
         Auth::login($user);
 
@@ -88,10 +83,10 @@ class RegisteredUserController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Registration successful! Please check your email to verify your account.',
-                'redirect' => route('verification.notice')
+                'redirect' => route('home')
             ]);
         }
 
-        return redirect()->route('verification.notice');
+        return redirect()->route('home');
     }
 }

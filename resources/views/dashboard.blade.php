@@ -23,4 +23,43 @@
         </div>
     </div>
 </section>
+
+@if (session('success') || session('login_success') || request()->query('verified'))
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            let title = 'Success!';
+            let text = '';
+            
+            @if (session('success'))
+                text = "{{ session('success') }}";
+            @elseif (session('login_success'))
+                title = 'Login Successful!';
+                text = "{{ session('login_success') }}";
+            @elseif (request()->query('verified'))
+                title = 'Email Verified!';
+                text = 'Your email has been verified successfully! Welcome to Grace Circle Christian Dating.';
+            @endif
+
+            Swal.fire({
+                icon: 'success',
+                title: title,
+                text: text,
+                showConfirmButton: true,
+                confirmButtonColor: '#28a745',
+                timer: 5000,
+                timerProgressBar: true,
+                width: '600px',
+                padding: '3em',
+                color: '#2f3c44',
+                background: '#fff',
+                backdrop: `rgba(0,123,0,0.4)`
+            });
+
+            // Remove the verified parameter from URL
+            if (window.location.search.includes('verified')) {
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+        });
+    </script>
+@endif
 @endsection

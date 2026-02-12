@@ -42,7 +42,7 @@ class Payment extends Model
     /**
      * Default trial period in days for new users.
      */
-    const TRIAL_PERIOD_DAYS = 5;
+    const TRIAL_PERIOD_DAYS = 3;
 
     /**
      * Subscription period in days after successful payment.
@@ -90,6 +90,11 @@ class Payment extends Model
             return false;
         }
 
+        // Trial users get NO grace period - block immediately
+        if ($this->isTrial()) {
+            return true;
+        }
+
         $expiryDate = $this->valid_till;
         $gracePeriodEnd = $expiryDate->copy()->addDays(self::GRACE_PERIOD_DAYS);
 
@@ -112,7 +117,8 @@ class Payment extends Model
         if ($this->isValid()) {
             return 0;
         }
-        return Carbon::now()->diffInDays($this->valid_till);
+        // Use absolute difference to avoid negatives in display
+        return (int) abs(Carbon::now()->diffInDays($this->valid_till));
     }
 
     /**

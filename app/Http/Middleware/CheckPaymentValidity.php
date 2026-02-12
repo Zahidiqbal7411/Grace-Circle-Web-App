@@ -38,9 +38,15 @@ class CheckPaymentValidity
 
         // Optional: Check if within grace period and set a session flag for warning
         $payment = $user->payment;
-        if ($payment && $payment->isWithinGracePeriod()) {
-            session()->flash('subscription_warning', true);
-            session()->flash('subscription_days_expired', $payment->daysSinceExpiry());
+        if ($payment) {
+            if ($payment->isWithinGracePeriod()) {
+                session()->flash('subscription_warning', true);
+                session()->flash('subscription_days_expired', $payment->daysSinceExpiry());
+            } elseif ($payment->isValid() && $payment->daysUntilExpiry() <= 1) {
+                // If trial or subscription ending in <= 1 day
+                session()->flash('subscription_expiring_soon', true);
+                session()->flash('subscription_days_left', $payment->daysUntilExpiry());
+            }
         }
 
         return $next($request);

@@ -194,18 +194,27 @@
                 Your {{ \App\Models\Payment::TRIAL_PERIOD_DAYS }}-day free trial has expired. 
                 Subscribe now to continue enjoying Grace Circle's premium features!
             @else
-                Your subscription has expired {{ $daysSinceExpiry }} days ago. 
+                Your subscription has expired {{ $daysSinceExpiry }} {{ Str::plural('day', $daysSinceExpiry) }} ago. 
                 Please renew to regain access to your dashboard.
             @endif
         </p>
 
+        @if(!$isTrial)
         <div class="payment-info-box">
             <p>
                 <i class="fa fa-info-circle" style="margin-right: 5px;"></i>
-                Your subscription expired <strong>{{ $daysSinceExpiry }} days ago</strong>. 
+                Your subscription expired <strong>{{ $daysSinceExpiry }} {{ Str::plural('day', $daysSinceExpiry) }} ago</strong>. 
                 Access is blocked after a 3-day grace period.
             </p>
         </div>
+        @else
+        <div class="payment-info-box" style="background: #e3f2fd; border-color: #2196f3;">
+            <p style="color: #0d47a1;">
+                <i class="fa fa-gift" style="margin-right: 5px;"></i>
+                Your free trial has ended. Upgrade to premium for unlimited access!
+            </p>
+        </div>
+        @endif
 
         <div class="payment-price">
             ${{ $subscriptionPrice }}
