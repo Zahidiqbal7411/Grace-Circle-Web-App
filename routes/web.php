@@ -12,6 +12,8 @@ use App\Http\Controllers\ChatController;
 use App\Http\Controllers\FriendController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StripeController;
+use App\Http\Controllers\NotificationController;
+
 
 
 Route::get('/', function () {
@@ -31,6 +33,7 @@ Route::middleware(['auth', 'verified', 'payment.valid'])->group(function () {
     Route::get('/profile/edit/{id}', [UserProfileController::class, 'profile_edit'])->name('user.profile.edit');
     Route::post('/profile/autosave', [UserProfileController::class, 'autoSave'])->name('user.autosave');
     Route::post('/profile/image', [UserProfileController::class, 'store'])->name('user.image.store');
+    Route::delete('/profile/image/{id}', [UserProfileController::class, 'deleteImage'])->name('user.image.delete');
     
     Route::get('/block/{user}', [UserProfileController::class, 'user_block'])->name('user.block');
     Route::get('/unblock/{id}', [UserProfileController::class, 'unblock'])->name('user.unblock');
@@ -42,8 +45,11 @@ Route::middleware(['auth', 'verified', 'payment.valid'])->group(function () {
     Route::get('/chat', [ChatController::class, 'chat_create'])->name('chat');
     Route::post('/chat/messages', [ChatController::class, 'getMessages'])->name('chat.messages');
     Route::post('/chat/store', [ChatController::class, 'store'])->name('chat.store');
+    Route::get('/chat/statuses', [ChatController::class, 'getStatuses'])->name('chat.statuses');
     Route::get('/profile/questions', [UserProfileController::class, 'getQuestions'])->name('profile.questions');
+    Route::get('/notifications/clear', [NotificationController::class, 'clearAll'])->name('notifications.clear');
     Route::post('/profile/complete', [UserProfileController::class, 'completeProfile'])->name('profile.complete');
+    Route::post('/user/ping', function() { return response()->json(['status' => 'ok']); })->name('user.ping');
 });
 
 // Subscription/Payment routes - only require auth (not payment.valid as these are for making payment)

@@ -128,6 +128,11 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(Gallery::class, 'user_id', 'id');
     }
 
+    public function images(): HasMany
+    {
+        return $this->hasMany(Image::class, 'user_id', 'id');
+    }
+
     public function friendRequestsSent(): HasMany
     {
         return $this->hasMany(Friend::class, 'request_from');
@@ -156,6 +161,24 @@ class User extends Authenticatable implements MustVerifyEmail
     public function blockedByUsers(): HasMany
     {
         return $this->hasMany(Block::class, 'block_user');
+    }
+
+    public function getProfileImageUrlAttribute()
+    {
+        // Check new images table first
+        $newImg = $this->images->where('image_type', 'profile')->first();
+        if ($newImg) {
+            return asset($newImg->image_link);
+        }
+
+        // Check old galleries table as fallback
+        $oldImg = $this->galleries->where('image_type', 'profile')->first();
+        if ($oldImg) {
+            return asset($oldImg->image_path);
+        }
+
+        // Return default placeholder
+        return asset('img/photo/photo-1.jpg');
     }
 
     /* --- Helpers --- */

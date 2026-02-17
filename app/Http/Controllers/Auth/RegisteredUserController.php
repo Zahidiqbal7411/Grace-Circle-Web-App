@@ -83,10 +83,10 @@ class RegisteredUserController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Registration successful! Please check your email to verify your account.',
-                'redirect' => route('home')
+                'redirect' => route('members')
             ]);
         }
 
-        return redirect()->route('home');
+        return redirect()->route('members');
     }
 }

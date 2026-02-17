@@ -603,24 +603,23 @@
                             <ul class="list-unstyled chat-list mt-2 mb-0" id="user-list">
                                 @forelse ($users as $user)
                                     @php
-                                        $profileImage = $user->galleries->where('image_type', 'profile')->first();
-                                        $imageUrl = $profileImage
-                                            ? asset($profileImage->image_path)
-                                            : 'https://bootdey.com/img/Content/avatar/avatar1.png';
+                                        $imageUrl = $user->profile_image_url;
                                     @endphp
                                     <li class="clearfix user-item" data-user-id="{{ $user->id }}"
-                                        data-user-name="{{ $user->name }}" data-user-image="{{ $imageUrl }}"
+                                        data-user-name="{{ $user->name }}" 
+                                        data-user-image="{{ $imageUrl }}"
+                                        data-user-status="{{ $user->isOnline() ? 'online' : 'offline' }}"
+                                        data-user-last-seen="{{ $user->isOnline() ? 'Online' : ($user->last_seen ? 'Last seen: ' . $user->last_seen->diffForHumans() : 'Offline') }}"
                                         data-friend-id="{{ $user->friend_id }}"
                                         data-last-message-time="{{ $user->last_message_time }}">
-                                        <img src="{{ $imageUrl }}" alt="avatar" class="rounded-circle" width="50"
-                                            height="50">
+                                        <div style="position: relative; display: inline-block;">
+                                            <img src="{{ $imageUrl }}" alt="avatar" class="rounded-circle" style="width: 50px; height: 50px; object-fit: cover; border: 2px solid {{ $user->isOnline() ? '#44b700' : '#ccc' }};">
+                                            <span style="position: absolute; bottom: 2px; right: 2px; width: 12px; height: 12px; border-radius: 50%; background: {{ $user->isOnline() ? '#44b700' : '#999' }}; border: 2px solid #fff;"></span>
+                                        </div>
                                         <div class="about">
-                                            <div class="name">{{ $user->name }}</div>
-                                            <div class="status">
-                                                {{-- <i class="fa fa-circle offline"></i>
-                                                <small class="text-muted">
-                                                    {{ \Carbon\Carbon::parse($user->last_message_time)->diffForHumans() }}
-                                                </small> --}}
+                                            <div class="name" style="font-weight: 700; color: #333;">{{ $user->name }}</div>
+                                            <div class="status" style="font-size: 11px; color: {{ $user->isOnline() ? '#44b700' : '#888' }};">
+                                                {{ $user->isOnline() ? 'Online' : ($user->last_seen ? 'Last seen ' . $user->last_seen->diffForHumans() : 'Offline') }}
                                             </div>
                                         </div>
                                     </li>
@@ -644,7 +643,7 @@
                                         </a>
                                         <div class="chat-about">
                                             <h6 class="m-b-0" id="chat-user-name">Aiden Chavez</h6>
-                                            <small>Last seen: 2 hours ago</small>
+                                            <small id="chat-user-last-seen">Last seen: 2 hours ago</small>
                                         </div>
                                     </div>
                                     <div class="col-xs-6 text-right hidden-sm">
@@ -677,6 +676,7 @@
                                 </ul>
                             </div>
                             <p style="display: none" id="auth_id">{{ Auth::user()->id }}</p>
+                            <p style="display: none" id="auth_image_url">{{ $authImageUrl }}</p>
                             <div class="chat-message clearfix" style="padding-top: 10px; ">
                                 <form id="chatForm">
                                     <div class="input-group">
@@ -995,14 +995,26 @@
                 selectedUserId = this.dataset.userId;
                 const userName = this.dataset.userName;
                 const userImage = this.dataset.userImage;
-                loadHeaderChat(authUserId, userName, userImage, selectedFriendId, selectedUserId);
+                const userStatus = this.dataset.userStatus;
+                const userLastSeen = this.dataset.userLastSeen;
+                loadHeaderChat(authUserId, userName, userImage, selectedFriendId, selectedUserId, userLastSeen);
             });
         });
 
-        function loadHeaderChat(authUserId, userName, userImage, friendId, selectedUserId) {
+        let selectedUserImageUrl = null;
+        let authImageUrl = "{{ $authImageUrl }}";
+
+        // Fallback for empty or invalid URL or Blade tags remaining
+        if (!authImageUrl || authImageUrl.includes('{' + '{') || authImageUrl.length < 10) {
+            authImageUrl = '{{ asset("img/photo/photo-1.jpg") }}';
+        }
+
+        function loadHeaderChat(authUserId, userName, userImage, friendId, selectedUserId, userLastSeen) {
             if (!friendId) return;
 
+            selectedUserImageUrl = userImage; 
             document.getElementById('chat-user-name').innerText = userName;
+            document.getElementById('chat-user-last-seen').innerText = userLastSeen;
             document.querySelector('.chat-header img').src = userImage;
             document.getElementById('friend_id').value = friendId;
             document.getElementById('receiver_id').value = selectedUserId;
@@ -1014,7 +1026,7 @@
             chatBox.appendChild(ul);
 
             $.ajax({
-                url: '{{ route('chat.fetch') }}',
+                url: '{{ route('chat.messages') }}',
                 method: 'POST',
                 data: {
                     friend_id: friendId,
@@ -1065,11 +1077,28 @@
 
             const li = document.createElement('li');
             li.className = 'clearfix';
-            li.innerHTML = isSenderAuth ?
-                `<div class="message-data text-right"><span class="message-data-time">${time}</span></div>
-               <div class="message other-message pull-right">${escapeHtml(msg.message)}</div>` :
-                `<div class="message-data"><span class="message-data-time">${time}</span></div>
-               <div class="message my-message">${escapeHtml(msg.message)}</div>`;
+            
+            if (isSenderAuth) {
+                // Sent by Me - Right Side
+                li.innerHTML = `
+                    <div class="message-data text-right" style="display: flex; align-items: center; justify-content: flex-end; gap: 10px; margin-bottom: 5px;">
+                        <span class="message-data-time" style="font-size: 11px; color: #999;">${time}</span>
+                        <img src="${authImageUrl}" onerror="this.src='{{ asset('img/photo/photo-1.jpg') }}'" alt="avatar" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 1px solid #ddd;">
+                    </div>
+                    <div class="message other-message pull-right" style="background: #6C63FF; color: white; border-bottom-right-radius: 2px; padding: 10px 15px; border-radius: 15px; max-width: 70%; word-wrap: break-word; position: relative;">
+                        ${escapeHtml(msg.message)}
+                    </div>`;
+            } else {
+                // Received from Them - Left Side
+                li.innerHTML = `
+                    <div class="message-data" style="display: flex; align-items: center; gap: 10px; margin-bottom: 5px;">
+                        <img src="${selectedUserImageUrl}" onerror="this.src='{{ asset('img/photo/photo-1.jpg') }}'" alt="avatar" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 1px solid #ddd;">
+                        <span class="message-data-time" style="font-size: 11px; color: #999;">${time}</span>
+                    </div>
+                    <div class="message my-message" style="background: #f1f3f5; color: #333; border-bottom-left-radius: 2px; padding: 10px 15px; border-radius: 15px; max-width: 70%; word-wrap: break-word; display: inline-block; position: relative;">
+                        ${escapeHtml(msg.message)}
+                    </div>`;
+            }
 
             ul.appendChild(li);
         }
@@ -1127,7 +1156,7 @@
             };
 
             $.ajax({
-                url: '{{ route('chat.send') }}',
+                url: '{{ route('chat.store') }}',
                 method: 'POST',
                 data: formData,
                 success: function(response) {
@@ -1206,5 +1235,43 @@
                 }
             });
         });
+
+        // Real-time Presence Sync
+        function updatePresence() {
+            // Keep ME online
+            $.post("{{ route('user.ping') }}", { _token: "{{ csrf_token() }}" });
+
+            // Refresh OTHERS' statuses
+            $.get("{{ route('chat.statuses') }}", function(data) {
+                data.statuses.forEach(status => {
+                    const userItem = document.querySelector(`.user-item[data-user-id="${status.id}"]`);
+                    if (userItem) {
+                        userItem.dataset.userStatus = status.is_online ? 'online' : 'offline';
+                        userItem.dataset.userLastSeen = status.last_seen;
+                        
+                        const statusDot = userItem.querySelector('.rounded-circle + span');
+                        const statusText = userItem.querySelector('.status');
+                        const img = userItem.querySelector('img');
+
+                        if (statusDot) statusDot.style.background = status.is_online ? '#44b700' : '#999';
+                        if (statusText) {
+                            statusText.innerText = status.last_seen;
+                            statusText.style.color = status.is_online ? '#44b700' : '#888';
+                        }
+                        if (img) img.style.borderColor = status.is_online ? '#44b700' : '#ccc';
+
+                        // If currently chatting with this user, update header too
+                        if (typeof selectedUserId !== 'undefined' && String(selectedUserId) === String(status.id)) {
+                            const headerStatus = document.getElementById('chat-user-last-seen');
+                            if (headerStatus) headerStatus.innerText = status.last_seen;
+                        }
+                    }
+                });
+            });
+        }
+
+        // Run every minute (ping more frequently if needed)
+        setInterval(updatePresence, 60000); 
+        setTimeout(updatePresence, 5000); // Initial run after 5s
     </script>
 @endsection

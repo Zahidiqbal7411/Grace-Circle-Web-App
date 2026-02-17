@@ -4,12 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Models\Block;
 use App\Models\Gallery;
+use App\Models\Image;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 use App\Models\Question;
 use Illuminate\Support\Facades\DB;
+use App\Models\Friend;
+
 
 class UserProfileController extends Controller
 {
@@ -61,13 +64,10 @@ class UserProfileController extends Controller
 
     public function profile_edit($id)
     {
-        $user = User::with('galleries')->findOrFail($id);
+        $user = User::with(['galleries', 'images'])->findOrFail($id);
 
         return view('user_profile.edit_profile', get_defined_vars());
     }
-
-
-
 
     public function autoSave(Request $request)
     {
@@ -79,7 +79,7 @@ class UserProfileController extends Controller
 
         // For 'languages' field, handle JSON (optional)
         if ($field == 'languages') {
-            $value_array = array_map('trim', explode(',', $value));  // Split string to array
+            $value_array = array_map('trim', explode(',', $value));
             $user->$field = json_encode($value_array);
         } else {
             $user->$field = $value;
@@ -91,13 +91,13 @@ class UserProfileController extends Controller
         $responseData = [];
 
         if ($field == 'name') {
-            $responseData['name'] = $user->name;  // updated name
+            $responseData['name'] = $user->name;
         } elseif ($field == 'age') {
-            $responseData['age'] = $user->age;  // updated age
+            $responseData['age'] = $user->age;
         } elseif ($field == 'country') {
-            $responseData['country'] = $user->country;  // updated country
+            $responseData['country'] = $user->country;
         } elseif ($field == 'city') {
-            $responseData['city'] = $user->city;  // updated city
+            $responseData['city'] = $user->city;
         }
 
         return response()->json([
@@ -106,69 +106,119 @@ class UserProfileController extends Controller
         ]);
     }
 
+    /**
+     * Upload image (profile, cover, or random) and save to `images` table.
+     */
     public function store(Request $request)
     {
         $request->validate([
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'image_type' => 'required|in:profile,cover,gallery',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
+            'image_type' => 'required|in:profile,cover,random',
             'user_id' => 'required|exists:users,id',
         ]);
 
         $image = $request->file('image');
         $imageName = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
 
-        // Save in /public/uploads/gallery (make sure folder exists)
-        $destinationPath = public_path('uploads/gallery');
+        // Save in /public/uploads/images/{type}
+        $subFolder = $request->image_type;
+        $destinationPath = public_path('uploads/images/' . $subFolder);
         if (!file_exists($destinationPath)) {
             mkdir($destinationPath, 0755, true);
         }
 
         $image->move($destinationPath, $imageName);
-        $relativeImagePath = 'uploads/gallery/' . $imageName;
+        $relativeImageLink = 'uploads/images/' . $subFolder . '/' . $imageName;
 
-        // Check if image already exists for user and image_type
-        $gallery = Gallery::where('user_id', $request->user_id)
-            ->where('image_type', $request->image_type)
-            ->first();
+        // For profile and cover, replace existing; for random, always create new
+        if (in_array($request->image_type, ['profile', 'cover'])) {
+            $existing = Image::where('user_id', $request->user_id)
+                ->where('image_type', $request->image_type)
+                ->first();
 
-        if ($gallery) {
-            // Optional: Delete old image file (cleanup)
-            $oldImagePath = public_path($gallery->image_path);
-            if (file_exists($oldImagePath)) {
-                unlink($oldImagePath);
+            if ($existing) {
+                // Delete old file
+                $oldPath = public_path($existing->image_link);
+                if (file_exists($oldPath)) {
+                    @unlink($oldPath);
+                }
+
+                $existing->image_link = $relativeImageLink;
+                $existing->save();
+            } else {
+                Image::create([
+                    'user_id' => $request->user_id,
+                    'image_type' => $request->image_type,
+                    'image_link' => $relativeImageLink,
+                ]);
             }
-
-            // Update existing record
-            $gallery->image_path = $relativeImagePath;
-            $gallery->status = 1;
-            $gallery->block = 0;
-            $gallery->save();
         } else {
-            // Create new record
-            $gallery = new Gallery();
-            $gallery->user_id = $request->user_id;
-            $gallery->image_type = $request->image_type;
-            $gallery->image_path = $relativeImagePath;
-            $gallery->status = 1;
-            $gallery->block = 0;
-            $gallery->save();
+            // Random images — always create new records
+            Image::create([
+                'user_id' => $request->user_id,
+                'image_type' => 'random',
+                'image_link' => $relativeImageLink,
+            ]);
         }
 
         return response()->json([
             'message' => 'Image uploaded successfully!',
-            'new_image_url' => asset($relativeImagePath)
+            'new_image_url' => asset($relativeImageLink),
+            'image_link' => $relativeImageLink,
         ]);
     }
+
+    /**
+     * Delete a random image.
+     */
+    public function deleteImage($imageId)
+    {
+        $image = Image::where('image_id', $imageId)
+            ->where('user_id', Auth::id())
+            ->firstOrFail();
+
+        // Delete file from disk
+        $filePath = public_path($image->image_link);
+        if (file_exists($filePath)) {
+            @unlink($filePath);
+        }
+
+        $image->delete();
+
+        return response()->json(['message' => 'Image deleted successfully!']);
+    }
+
     public function user_block($block_user)
     {
+        $userId = Auth::id();
+
+        // Delete any existing friend relationship
+        Friend::where(function ($query) use ($userId, $block_user) {
+            $query->where('request_from', $userId)
+                  ->where('request_to', $block_user);
+        })->orWhere(function ($query) use ($userId, $block_user) {
+            $query->where('request_from', $block_user)
+                  ->where('request_to', $userId);
+        })->delete();
+
+        // Also delete any pending notifications between these two users
+        \App\Models\Notification::where('type', 1)
+            ->where(function ($query) use ($userId, $block_user) {
+                $query->where(function ($q) use ($userId, $block_user) {
+                    $q->where('user_id', $userId)->where('sender_id', $block_user);
+                })->orWhere(function ($q) use ($userId, $block_user) {
+                    $q->where('user_id', $block_user)->where('sender_id', $userId);
+                });
+            })->delete();
+
         $block = new Block();
-        $block->block_by = Auth::user()->id;
+        $block->block_by = $userId;
         $block->block_user = $block_user;
         $block->remarks = "no remarks";
         $block->save();
-        return redirect()->route('members')->with('success', 'User Block Successfully');
+        
+        return back()->with('success', 'User Blocked Successfully');
     }
-
 
     public function unblock($user_id)
     {

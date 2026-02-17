@@ -525,8 +525,15 @@
             title = 'Login Successful';
             text = "{{ session('login_success') }}";
         @elseif (session('success'))
-            title = 'Payment Successful';
-            text = "{{ session('success') }}";
+            let msg = "{{ session('success') }}";
+            title = 'Success!';
+            text = msg;
+            
+            if (msg.toLowerCase().includes('payment')) {
+                title = 'Payment Successful';
+            } else if (msg.toLowerCase().includes('friend')) {
+                title = 'Friend Request Accepted';
+            }
         @elseif (session('reg_success'))
             title = 'Registration Successful';
             text = "{{ session('reg_success') }}";

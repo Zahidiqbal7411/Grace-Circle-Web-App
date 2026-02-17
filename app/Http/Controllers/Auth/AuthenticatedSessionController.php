@@ -50,11 +50,11 @@ class AuthenticatedSessionController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Welcome back, ' . Auth::user()->name . '! You have successfully logged in.',
-                'redirect' => route('dashboard')
+                'redirect' => route('members')
             ]);
         }
 
-        return redirect()->intended(route('dashboard'))->with('login_success', 'Welcome back, ' . Auth::user()->name . '! You have successfully logged in.');
+        return redirect()->intended(route('members'))->with('login_success', 'Welcome back, ' . Auth::user()->name . '! You have successfully logged in.');
     }
 
     /**

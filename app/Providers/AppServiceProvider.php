@@ -21,10 +21,21 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // Share questions with the header layout for registration modal
+        // Share questions and notifications with the header layout
         View::composer('layouts.header', function ($view) {
-            $questions = Question::active()->ordered()->get();
-            $view->with('questions', $questions);
+            $questions = \App\Models\Question::active()->ordered()->get();
+            $notifications = [];
+            if (auth()->check()) {
+                $notifications = \App\Models\Notification::with(['sender.images', 'sender.galleries'])
+                    ->where('user_id', auth()->id())
+                    ->where('seen', 0)
+                    ->orderBy('created_at', 'desc')
+                    ->get();
+            }
+            $view->with([
+                'questions' => $questions,
+                'notifications' => $notifications
+            ]);
         });
     }
 }

@@ -337,13 +337,93 @@
                     @endguest
 
                     @auth
+                        <li class="dropdown notifications-dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" 
+                               style="padding: 0 15px; position: relative; display: flex; align-items: center; height: 100%; transition: all 0.3s;">
+                                <div style="position: relative;">
+                                    <i class="fa fa-bell" style="font-size: 24px; color: #6C63FF; transition: transform 0.3s;"></i>
+                                    @if(count($notifications) > 0)
+                                        <span class="notification-badge" style="position: absolute; top: -8px; right: -8px; background: #FF4D4D; color: white; border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; border: 2.5px solid white; box-shadow: 0 4px 10px rgba(255,77,77,0.4); animation: pulse 2s infinite;">{{ count($notifications) }}</span>
+                                    @endif
+                                </div>
+                            </a>
+                            <ul class="dropdown-menu notification-list" style="width: 420px !important; padding: 0 !important; border-radius: 24px !important; overflow: hidden !important; box-shadow: 0 25px 60px rgba(0,0,0,0.2) !important; border: 1px solid rgba(108,99,255,0.1) !important; margin-top: 20px !important; left: auto !important; right: -50px !important; background: #ffffff !important;">
+                                <li class="notification-header" style="background: #ffffff !important; padding: 22px 28px !important; border-bottom: 1px solid #f0f2f5 !important; display: flex !important; align-items: center !important; justify-content: space-between !important;">
+                                    <span style="font-weight: 900 !important; color: #1a202c !important; font-size: 22px !important; letter-spacing: -0.7px !important;">Notifications</span>
+                                    @if(count($notifications) > 0)
+                                        <a href="{{ route('notifications.clear') }}" style="color: #6C63FF !important; font-size: 13px !important; font-weight: 700 !important; text-decoration: none !important; padding: 8px 16px !important; background: rgba(108,99,255,0.06) !important; border-radius: 30px !important; transition: all 0.3s !important;">Mark all as read</a>
+                                    @endif
+                                </li>
+                                <div class="notification-scroll-area" style="max-height: 520px !important; overflow-y: auto !important; min-height: 300px !important;">
+                                    @forelse($notifications as $notif)
+                                        @php
+                                            $sender = $notif->sender;
+                                            $senderImg = $sender ? $sender->profile_image_url : asset('img/photo/photo-1.jpg');
+                                        @endphp
+                                        <li class="notification-item" style="transition: all 0.25s !important; border-bottom: 1px solid #f8f9fa !important;">
+                                            <a href="{{ route('member.details', $notif->sender_id) }}" style="padding: 20px 28px !important; display: block !important; white-space: normal !important; color: #4a5568 !important; text-decoration: none !important; background: transparent !important;">
+                                                <div style="display: flex !important; align-items: center !important; gap: 18px !important;">
+                                                    <div style="position: relative !important; flex-shrink: 0 !important;">
+                                                        <img src="{{ $senderImg }}" style="width: 60px !important; height: 60px !important; border-radius: 20px !important; object-fit: cover !important; box-shadow: 0 8px 15px rgba(0,0,0,0.1) !important; border: 2px solid #fff !important;">
+                                                        <div style="position: absolute !important; bottom: -4px !important; right: -4px !important; width: 24px !important; height: 24px !important; background: #6C63FF !important; border: 2.5px solid #fff !important; border-radius: 50% !important; display: flex !important; align-items: center !important; justify-content: center !important; box-shadow: 0 4px 8px rgba(108,99,255,0.3) !important;">
+                                                            <i class="fa fa-user-plus" style="color: white !important; font-size: 11px !important;"></i>
+                                                        </div>
+                                                    </div>
+                                                    <div style="flex: 1 !important;">
+                                                        <p style="margin: 0 !important; font-size: 15px !important; line-height: 1.5 !important; color: #2d3748 !important; font-weight: 500 !important;">
+                                                            <strong style="color: #1a202c !important; font-weight: 800 !important;">{{ $sender ? $sender->name : 'Someone' }}</strong> sent you a match request.
+                                                        </p>
+                                                        <span style="display: block !important; font-size: 12px !important; color: #a0aec0 !important; margin-top: 8px !important; font-weight: 600 !important; text-transform: uppercase; letter-spacing: 0.5px !important;">
+                                                            <i class="fa fa-clock-o" style="margin-right: 5px !important; opacity: 0.7 !important;"></i>{{ $notif->created_at->diffForHumans() }}
+                                                        </span>
+                                                    </div>
+                                                    <div style="width: 12px !important; height: 12px !important; background: #6C63FF !important; border-radius: 50% !important; flex-shrink: 0 !important; box-shadow: 0 0 12px rgba(108,99,255,0.4) !important;"></div>
+                                                </div>
+                                            </a>
+                                        </li>
+                                    @empty
+                                        <div style="padding: 100px 40px !important; text-align: center !important;">
+                                            <div style="width: 100px !important; height: 100px !important; background: #f8f9fb !important; border-radius: 50% !important; display: flex !important; align-items: center !important; justify-content: center !important; margin: 0 auto 24px !important;">
+                                                <i class="fa fa-bell-slash-o" style="font-size: 40px !important; color: #cbd5e0 !important;"></i>
+                                            </div>
+                                            <h4 style="margin: 0 !important; font-weight: 900 !important; color: #1a202c !important; font-size: 19px !important;">Perfectly caught up!</h4>
+                                            <p style="margin: 10px 0 0 !important; color: #a0aec0 !important; font-size: 14px !important; line-height: 1.6 !important;">No new match requests or updates right now. Check back later!</p>
+                                        </div>
+                                    @endforelse
+                                </div>
+                                <li style="border-top: 1px solid #f0f2f5 !important; background: #fafbfc !important;">
+                                    <a href="#" style="padding: 18px !important; display: block !important; color: #6C63FF !important; font-weight: 800 !important; font-size: 14px !important; text-align: center !important; text-decoration: none !important; transition: all 0.3s !important;">See all notifications</a>
+                                </li>
+                                <style>
+                                    @keyframes pulse {
+                                        0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 77, 77, 0.7); }
+                                        70% { transform: scale(1.1); box-shadow: 0 0 0 12px rgba(255, 77, 77, 0); }
+                                        100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 77, 77, 0); }
+                                    }
+                                    .notification-item:hover { background: #f8faff !important; transform: scale(0.99); }
+                                    .notification-scroll-area::-webkit-scrollbar { width: 6px; }
+                                    .notification-scroll-area::-webkit-scrollbar-track { background: #f1f1f1; }
+                                    .notification-scroll-area::-webkit-scrollbar-thumb { background: #cbd5e0; border-radius: 10px; }
+                                    .notification-scroll-area::-webkit-scrollbar-thumb:hover { background: #a0aec0; }
+                                    .notifications-dropdown:hover .fa-bell { animation: bellShake 0.5s ease; }
+                                    @keyframes bellShake {
+                                        0% { transform: rotate(0); }
+                                        25% { transform: rotate(15deg); }
+                                        50% { transform: rotate(-15deg); }
+                                        75% { transform: rotate(10deg); }
+                                        100% { transform: rotate(0); }
+                                    }
+                                </style>
+                            </ul>
+                        </li>
+
                         <li class="flag_drop d-flex align-items-center">
                             <div class="selector">
                                 <select class="language_drop" name="select-action" id="select-action"
                                     onChange="handleAction(this)" style="height: 0px !important">
                                     <option value="" selected disabled>{{ Auth::user()->name }}</option>
                                     <option value="{{ route('members') }}">Find Match</option>
-                                    <option value="">Inbox</option>
+                                    <option value="{{ route('chat') }}">Inbox</option>
                                     <option value="{{ route('user.profile.edit', Auth::user()->id) }}">Profile</option>
                                     <option value="logout">Sign Out</option>
                                 </select>

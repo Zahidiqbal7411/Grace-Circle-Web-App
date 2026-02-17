@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use App\Models\Friend;
+use App\Models\Block;
+
 
 
 
@@ -74,6 +76,11 @@ class ChatController extends Controller
     {
         $userId = Auth::id();
 
+        // Get IDs of people I blocked or who blocked me
+        $blockedIds = Block::where('block_by', $userId)->pluck('block_user')
+            ->merge(Block::where('block_user', $userId)->pluck('block_by'))
+            ->unique();
+
         $friendIds = Friend::where('accept', 1)
             ->where(function ($query) use ($userId) {
                 $query->where('request_from', $userId)
@@ -82,6 +89,9 @@ class ChatController extends Controller
             ->get()
             ->map(function ($friend) use ($userId) {
                 return $friend->request_from == $userId ? $friend->request_to : $friend->request_from;
+            })
+            ->filter(function($id) use ($blockedIds) {
+                return !in_array($id, $blockedIds->toArray());
             })
             ->unique()
             ->values();
@@ -110,26 +120,31 @@ class ChatController extends Controller
 
         $users = $users->sortByDesc('last_message_time')->values();
 
-        return view('chat.chat', compact('users'));
+        $authUser = User::with(['images', 'galleries'])->find(Auth::id());
+        $authImageUrl = $authUser->profile_image_url;
+
+        return view('chat.chat', compact('users', 'authImageUrl'));
     }
 
 
     public function getMessages(Request $request)
     {
-        $userId = $request->user_id;
+        $authUserId = $request->auth_user_id;
+        $selectedUserId = $request->selected_user_id;
         $friendId = $request->friend_id;
 
-        $messages = Chat::where(function ($query) use ($userId, $friendId) {
-            $query->where('sender_id', $userId)
-                ->where('receiver_id', $friendId);
-        })->orWhere(function ($query) use ($userId, $friendId) {
-            $query->where('sender_id', $friendId)
-                ->where('receiver_id', $userId);
-        })
-            ->orderBy('sent_at')
+        $messages = Chat::where('friend_id', $friendId)
+            ->where(function ($query) use ($authUserId, $selectedUserId) {
+                $query->where(function ($q) use ($authUserId, $selectedUserId) {
+                    $q->where('sender_id', $authUserId)->where('receiver_id', $selectedUserId);
+                })->orWhere(function ($q) use ($authUserId, $selectedUserId) {
+                    $q->where('sender_id', $selectedUserId)->where('receiver_id', $authUserId);
+                });
+            })
+            ->orderBy('sent_at', 'asc')
             ->get(['sender_id', 'receiver_id', 'message', 'sent_at']);
 
-        return response()->json($messages);
+        return response()->json(['chats' => $messages]);
     }
 
 
@@ -165,6 +180,18 @@ class ChatController extends Controller
         ]);
 
         $senderId = Auth::id();
+        $receiverId = $request->user_id;
+
+        // Security check: Don't allow messaging if blocked
+        $isBlocked = Block::where(function($q) use ($senderId, $receiverId) {
+            $q->where('block_by', $senderId)->where('block_user', $receiverId);
+        })->orWhere(function($q) use ($senderId, $receiverId) {
+            $q->where('block_by', $receiverId)->where('block_user', $senderId);
+        })->exists();
+
+        if ($isBlocked) {
+            return response()->json(['success' => false, 'message' => 'Cannot send message to a blocked user.'], 403);
+        }
 
         $chat = Chat::create([
             'friend_id' => $request->friend_id,
@@ -191,6 +218,29 @@ class ChatController extends Controller
 
 
 
+
+
+    public function getStatuses(Request $request)
+    {
+        $userId = Auth::id();
+        $friendIds = Friend::where('accept', 1)
+            ->where(function ($query) use ($userId) {
+                $query->where('request_from', $userId)->orWhere('request_to', $userId);
+            })
+            ->get()
+            ->map(fn($f) => $f->request_from == $userId ? $f->request_to : $f->request_from)
+            ->unique();
+
+        $statuses = User::whereIn('id', $friendIds)->get()->map(function ($user) {
+            return [
+                'id' => $user->id,
+                'is_online' => $user->isOnline(),
+                'last_seen' => $user->isOnline() ? 'Online' : ($user->last_seen ? 'Last seen ' . $user->last_seen->diffForHumans() : 'Offline')
+            ];
+        });
+
+        return response()->json(['statuses' => $statuses]);
+    }
 
 
     public function fetchChat(Request $request)
